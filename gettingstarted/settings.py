@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "hello",
+    'api',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -75,11 +76,14 @@ WSGI_APPLICATION = "gettingstarted.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
 DATABASES = {
     "default": {
-        "ENGINE" : "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3")
+        "HOST": "ec2-52-87-58-157.compute-1.amazonaws.com",
+        "NAME": "d2di9jj1cs4ar8",
+        "USER": "sugqycwzipcmym",
+        "PORT": "5432",
+        "PASSWORD": "e64d00efbc35c4cd3b9c5cbfa9c92a58e77739652c79da4ba230db1fdfc6e588",
+        "ENGINE": "django.db.backends.postgresql"
     }
 }
 

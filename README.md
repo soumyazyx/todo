@@ -1,7 +1,7 @@
 # todo
 Simple todo app 
 
-**Badges will go here**
+**TOPICS**
 
 - Google/facebook/github authentication page
     - get the email id
