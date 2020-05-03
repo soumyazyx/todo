@@ -3,9 +3,9 @@ Simple todo app
 
 
 Google/facebook/github authentication page
-    - get the email id
-    - get the first name
-    - get the image 
+    get the email id
+    get the first name
+    get the image 
 
     - profile page
     - Delete profile
@@ -38,9 +38,9 @@ Tasks
 
 
 front end 
-- HTML / CSS / JS / JQuery
+    - HTML / CSS / JS / JQuery
 
 back end
-- Django REST framework
-- API Endpoints
-    - TBD
+    - Django REST framework
+    - API Endpoints
+        - TBD
