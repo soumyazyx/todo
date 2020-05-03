@@ -39,10 +39,28 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'api',
-    'frontend',
-    'rest_framework'
+    "api",
+    "frontend",
+    "rest_framework",
+    "django.contrib.sites",
+    # ALLAUTH
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    # PROVIDERS
+    "allauth.socialaccount.providers.google"
 ]
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -120,5 +138,7 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = "/static/"
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
 
 django_heroku.settings(locals())
