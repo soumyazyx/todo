@@ -6,4 +6,5 @@ admin.autodiscover()
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/', include('api.urls')),
+    path('', include('frontend.urls')),
 ]
