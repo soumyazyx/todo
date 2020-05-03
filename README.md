@@ -1,5 +1,7 @@
 # todo
 Simple todo app 
+https://www.youtube.com/watch?v=TmsD8QExZ84
+https://www.youtube.com/watch?v=hISSGMafzvU
 
 **TOPICS**
 
