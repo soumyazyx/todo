@@ -113,6 +113,10 @@
     </div>
 
     <script type="text/javascript">
+            
+        var baseurl = 'https://todozyx.herokuapp.com'
+        {% comment %} var baseurl = 'http://127.0.0.1:8000' {% endcomment %}
+
 		function getCookie(name) {
             var cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -129,17 +133,15 @@
             return cookieValue;
         }
         var csrftoken = getCookie('csrftoken');
-
         var activeItem = null
         var list_snapshot = []
-
+        
         buildList()
-
         function buildList() {
             var wrapper = document.getElementById('list-wrapper')
             //wrapper.innerHTML = ''
-            // var url = 'https://todozyx.herokuapp.com/api/task-list/'
-            var url = 'http://127.0.0.1:8000/api/task-list/'
+            
+            var url = baseurl + '/api/tasks/'
             fetch(url)
                 .then((resp) => resp.json())
                 .then(function (data) {
@@ -211,11 +213,7 @@
                                 strikeUnstrike(item)
                             }
                         })(list[i]))
-
-
                     }
-
-
                 })
         }
 
@@ -224,15 +222,11 @@
         form.addEventListener('submit', function (e) {
             e.preventDefault()
             console.log('Form submitted')
-            // var url = 'https://todozyx.herokuapp.com/api/task-create/'
-            var url = 'http://127.0.0.1:8000/api/task-create/'
+            var url = baseurl + '/api/task-create/'
             if (activeItem != null) {
-                // var url = `https://todozyx.herokuapp.com/api/task-update/${activeItem.id}`
-                var url = `http://127.0.0.1:8000/api/task-update/${activeItem.id}`
+                var url = baseurl + `/api/task-update/${activeItem.id}`
                 activeItem = null
             }
-
-
 
             var title = document.getElementById('title').value
             fetch(url, {
@@ -241,16 +235,13 @@
                     'Content-type': 'application/json',
                     'X-CSRFToken': csrftoken,
                 },
-                body: JSON.stringify({ 'title': title })
+                body: JSON.stringify({ 'title': title, '_list': 1 })
             }
             ).then(function (response) {
                 buildList()
                 document.getElementById('form').reset()
             })
         })
-
-
-
 
         function editItem(item) {
             console.log('Item clicked:', item)
@@ -261,8 +252,7 @@
 
         function deleteItem(item) {
             console.log('Delete clicked')
-            //fetch(`https://todozyx.herokuapp.com/api/task-delete/${item.id}`, {
-            fetch(`http://127.0.0.1:8000/api/task-delete/${item.id}`, {
+            fetch(baseurl + `/api/task-delete/${item.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-type': 'application/json',
@@ -275,10 +265,8 @@
 
         function strikeUnstrike(item) {
             console.log('Strike clicked')
-
             item.completed = !item.completed
-            //fetch(`https://todozyx.herokuapp.com/api/task-update/${item.id}`, {
-            fetch(`http://127.0.0.1:8000/api/task-update/${item.id}`, {
+            fetch(baseurl + `/api/task-update/${item.id}`, {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',
@@ -289,10 +277,6 @@
                 buildList()
             })
         }
-
-
     </script>
-
 </body>
-
 </html>
