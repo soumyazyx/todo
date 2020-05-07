@@ -81,7 +81,7 @@
 </head>
 
 <body>
-    <div class="container">
+  <div class="container-fluid">
     <span id="logged_in_username">{{user}}</span>
     <span id="listid">{{listid}}</span>
     {% if user.is_authenticated %}
@@ -92,8 +92,9 @@
         Sign in with Google
       </a>
     {% endif %}
-        <div id="task-container">
-            <div id="form-wrapper">
+    <div id="task-container">
+      <div id="form-wrapper">
+      <br>
                 <form id="form">
                     <div class="flex-wrapper">
                         <div style="flex: 6">
