@@ -4,16 +4,8 @@
 <html>
   {% include 'frontend/head.html' %}
   <body>
-    {% include 'frontend/header.html' %}
+    {% include 'frontend/lists_header.html' %}
 
-    <!-- hidden spans -->
-    <span class="d-none" id="logged_in_username">{{user}}</span>
-    <span class="d-none" id="logged_in_userid"></span>
-    <span class="d-none"> {{user}}</span>
-    <span class="d-none"> {{user.username}}</span>
-    <span class="d-none"> {{user.first_name}}</span>
-    <span class="d-none"> {{user.last_name}}</span>
-    <span class="d-none"> {{user.email}}</span>
     <div class="container">
       <div class="row">
         <div class="col-12">
@@ -49,7 +41,6 @@
     <script type="text/javascript">
       $(document).ready(function () {
         var baseurl = window.location.origin;
-
         var loggedInUsername = $("#logged_in_username").text();
         var csrftoken = getCookie("csrftoken");
         var activeItem = null;
@@ -57,77 +48,6 @@
 
         getUserId();
         buildLists();
-
-        function buildLists() {
-          var url = baseurl + "/api/lists/" + loggedInUsername;
-          var wrapper = document.getElementById("lists-wrapper");
-
-          console.log(`Fetching list/s using [${url}]..`);
-          fetch(url)
-            .then((resp) => resp.json())
-            .then(function (data) {
-              console.log(`BEEP`);
-              $("#lists-wrapper").empty();
-              console.log(`BEEP...done`);
-              console.log(`Fetching list/s using [${url}]..Done`);
-              var lists = data;
-              for (var i in lists) {
-                var listid = lists[i].id;
-                var title = lists[i].title;
-                var user = lists[i].user;
-                var href = baseurl + `/list/${listid}`;
-                try {
-                  $(`#data-row-${i}`).remove();
-                } catch (err) {
-                  console.log(err);
-                }
-                var title = `<span class="title">${lists[i].title}</span>`;
-                var item = `        
-                
-                <a style="display:block; text-decoration:none" class="shadow-sm p-2 mb-2 bg-white rounded" href=${href}>
-                  <span id="data-row-${i}" class="task-wrapper">
-                    <span class="text-muted"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
-                    <span class="text-muted">${title}</span>
-                  </span>
-                  <!-- 
-                  <span class="btn-group" role="group" aria-label="Basic example" style="float:right">
-                    <a      style="border:none" class="btn btn-sm btn-outline-info" href=${href}>View</a>
-                    <button style="border:none" class="btn btn-sm btn-outline-warning edit">Edit</button>
-                    <button style="border:none" class="btn btn-sm btn-outline-danger delete">Delete</button>                    
-                  </span>
-                  -->
-                </a>`;
-                wrapper.innerHTML += item;
-              }
-              if (listsSnapshot.length > lists.length) {
-                for (var i = lists.length; i < listsSnapshot.length; i++) {
-                  $(`#data-row-${i}`).remove();
-                }
-              }
-              listSnapshot = lists;
-              for (var i in lists) {
-                var editBtn = document.getElementsByClassName("edit")[i];
-                var deleteBtn = document.getElementsByClassName("delete")[i];
-                var title = document.getElementsByClassName("title")[i];
-                editBtn.addEventListener(
-                  "click",
-                  (function (item) {
-                    return function () {
-                      editItem(item);
-                    };
-                  })(lists[i])
-                );
-                deleteBtn.addEventListener(
-                  "click",
-                  (function (item) {
-                    return function () {
-                      deleteItem(item);
-                    };
-                  })(lists[i])
-                );
-              }
-            });
-        }
 
         var form = document.getElementById("form-wrapper");
         form.addEventListener("submit", function (e) {
@@ -208,6 +128,70 @@
               );
               console.log(`UserID = [${data.id}]`);
               $("#logged_in_userid").text(data.id);
+            });
+        }
+
+        function buildLists() {
+          var url = baseurl + "/api/lists/" + loggedInUsername;
+          var wrapper = document.getElementById("lists-wrapper");
+
+          console.log(`Fetching list/s using [${url}]..`);
+          fetch(url)
+            .then((resp) => resp.json())
+            .then(function (data) {
+              console.log(`Fetching list/s using [${url}]..Done`);
+              $("#lists-wrapper").empty();
+              var lists = data;
+              for (var i in lists) {
+                var listid = lists[i].id;
+                var title = lists[i].title;
+                var user = lists[i].user;
+                var href = baseurl + `/list/${listid}`;
+                var title = `<span class="title">${lists[i].title}</span>`;
+                var item = `        
+                
+                <a style="display:block; text-decoration:none" class="shadow-sm p-2 mb-2 bg-white rounded" href=${href}>
+                  <span id="data-row-${i}" class="task-wrapper">
+                    <span class="text-muted"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
+                    <span class="text-muted">${title}</span>
+                  </span>
+                  <!-- 
+                  <span class="btn-group" role="group" aria-label="Basic example" style="float:right">
+                    <a      style="border:none" class="btn btn-sm btn-outline-info" href=${href}>View</a>
+                    <button style="border:none" class="btn btn-sm btn-outline-warning edit">Edit</button>
+                    <button style="border:none" class="btn btn-sm btn-outline-danger delete">Delete</button>                    
+                  </span>
+                  -->
+                </a>`;
+                wrapper.innerHTML += item;
+              }
+              if (listsSnapshot.length > lists.length) {
+                for (var i = lists.length; i < listsSnapshot.length; i++) {
+                  $(`#data-row-${i}`).remove();
+                }
+              }
+              listSnapshot = lists;
+              for (var i in lists) {
+                var editBtn = document.getElementsByClassName("edit")[i];
+                var deleteBtn = document.getElementsByClassName("delete")[i];
+                var title = document.getElementsByClassName("title")[i];
+                editBtn.addEventListener(
+                  "click",
+                  (function (item) {
+                    return function () {
+                      editItem(item);
+                    };
+                  })(lists[i])
+                );
+                deleteBtn.addEventListener(
+                  "click",
+                  (function (item) {
+                    return function () {
+                      deleteItem(item);
+                    };
+                  })(lists[i])
+                );
+              }
             });
         }
       });

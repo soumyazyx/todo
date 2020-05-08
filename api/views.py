@@ -32,7 +32,6 @@ def apiOverview(request):
 
 @api_view(['GET'])
 def tasks(request, listid):
-    print(listid)
     tasks = Task.objects.filter(_list_id=listid)
     serializer = TaskSerializer(tasks, many=True)
     return Response(serializer.data)
@@ -71,6 +70,20 @@ def taskDelete(request, pk):
 
 @api_view(['GET'])
 def lists(request, username):
+    #     SELECT AL.ID AS LIST_ID, AL.TITLE AS LIST_TITLE, COUNT(TSK._LIST_ID) AS TASKS_COUNT
+    # FROM
+    #     PUBLIC.AUTH_USER AU,
+    #     PUBLIC.API_LIST AL,
+    #     PUBLIC.API_TASK TSK
+    # WHERE
+    #     AL.USER_ID = AU.ID
+    # AND
+    #     AL.ID = TSK._LIST_ID
+    # AND
+    #     AU.USERNAME = 'ranjita'
+    # GROUP BY
+    # AL.ID,TSK._LIST_ID
+
     query = f"SELECT AL.ID, AL.TITLE, AL.USER_ID FROM PUBLIC.AUTH_USER AU,PUBLIC.API_LIST AL WHERE AL.USER_ID = AU.ID AND AU.USERNAME = '{username}'"
     lists = List.objects.raw(query)
     serializer = ListSerializer(lists, many=True)
