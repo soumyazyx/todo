@@ -1,119 +1,77 @@
-{% load socialaccount %}
-{% providers_media_js %}
-{% load static %}
+{% load socialaccount %} {% providers_media_js %} {% load static %}
 
 <!DOCTYPE html>
 <html>
   {% include 'frontend/head.html' %}
   <body>
     {% include 'frontend/header.html' %}
-    <section>
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-8 col-xl-6">
-          <div class="row">
-            <div class="col text-center">
-              <h1>Register</h1>
-              <p class="text-h3">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia. </p>
-            </div>
-          </div>
-          <div class="row align-items-center">
-            <div class="col mt-4">
-              <input type="text" class="form-control" placeholder="Company Name">
-            </div>
-          </div>
-          <div class="row align-items-center mt-4">
-            <div class="col">
-              <input type="email" class="form-control" placeholder="Email">
-            </div>
-          </div>
-          <div class="row align-items-center mt-4">
-            <div class="col">
-              <input type="password" class="form-control" placeholder="Password">
-            </div>
-            <div class="col">
-              <input type="password" class="form-control" placeholder="Confirm Password">
-            </div>
-          </div>
-          <div class="row justify-content-start mt-4">
-            <div class="col">
-              <div class="form-check">
-                <label class="form-check-label">
-                  <input type="checkbox" class="form-check-input">
-                  I Read and Accept <a href="https://www.froala.com">Terms and Conditions</a>
-                </label>
-              </div>
 
-              <button class="btn btn-primary mt-4">Submit</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  
-    <main role="main" class="container-fluid p-0 mx-auto" style="max-width:500px">
-      <div class="mt-5"></div>
-      <div class="card card-body shadow">
-        <div class="row">
-          <div id="form-wrapper">
-                <form id="form">
-                    <div class="flex-wrapper">
-                        <div style="flex: 6">
-                            <input id="title" class="form-control" type="text" name="title" placeholder="Add new list">
-                        </div>
-                        <div style="flex: 1">
-                            <input id="submit" class="btn" type="submit" value="Create">
-                        </div>
-                    </div>
-                </form>
+    <!-- hidden spans -->
+    <span class="d-none" id="logged_in_username">{{user}}</span>
+    <span class="d-none" id="logged_in_userid"></span>
+    <span class="d-none"> {{user}}</span>
+    <span class="d-none"> {{user.username}}</span>
+    <span class="d-none"> {{user.first_name}}</span>
+    <span class="d-none"> {{user.last_name}}</span>
+    <span class="d-none"> {{user.email}}</span>
+
+    <main>
+      <div id="form-wrapper">
+        <form id="form">
+          <div class="flex-wrapper">
+            <div>
+              <input
+                id="title"
+                class="form-control"
+                type="text"
+                name="title"
+                placeholder="Add new list"
+              />
             </div>
 
-            <div id="lists-wrapper"></div>
-        </div>
+            <div>
+              <input id="submit" type="submit" value="Create" />
+            </div>
+          </div>
+        </form>
       </div>
+      <div id="lists-wrapper"></div>
     </main>
 
     <script type="text/javascript">
-            
-    $(document).ready(function(){
-      // var baseurl = 'https://todozyx.herokuapp.com'
-      // var baseurl = 'http://127.0.0.1:8000';
-      var baseurl = window.location.origin;
-      
-      var loggedInUsername = $("#logged_in_username").text();
-      var csrftoken = getCookie('csrftoken');
-      var activeItem = null
-      var listsSnapshot = []
+      $(document).ready(function () {
+        var baseurl = window.location.origin;
 
+        var loggedInUsername = $("#logged_in_username").text();
+        var csrftoken = getCookie("csrftoken");
+        var activeItem = null;
+        var listsSnapshot = [];
 
-      getUserId();
-      buildLists();
-      
+        getUserId();
+        buildLists();
 
-      function buildLists() {
+        function buildLists() {
+          var url = baseurl + "/api/lists/" + loggedInUsername;
+          var wrapper = document.getElementById("lists-wrapper");
 
-        var url = baseurl + '/api/lists/' + loggedInUsername
-        var wrapper = document.getElementById('lists-wrapper')
-        
-        console.log(`Fetching list/s using [${url}]..`);
-        fetch(url)
-        .then((resp) => resp.json())
-        .then(function (data) {
-          console.log(`Fetching list/s using [${url}]..Done`);
-          var lists = data
-          for (var i in lists) {
-            var listid = lists[i].id;
-            var title = lists[i].title;
-            var user = lists[i].user;
-            var href = baseurl + `/list/${listid}`;
-            try {
-              $(`#data-row-${i}`).remove()
-            } catch (err) {
-              console.log(err)
-            }
-            var title = `<span class="title">${lists[i].title}</span>`;
-            var item = `
+          console.log(`Fetching list/s using [${url}]..`);
+          fetch(url)
+            .then((resp) => resp.json())
+            .then(function (data) {
+              console.log(`Fetching list/s using [${url}]..Done`);
+              var lists = data;
+              for (var i in lists) {
+                var listid = lists[i].id;
+                var title = lists[i].title;
+                var user = lists[i].user;
+                var href = baseurl + `/list/${listid}`;
+                try {
+                  $(`#data-row-${i}`).remove();
+                } catch (err) {
+                  console.log(err);
+                }
+                var title = `<span class="title">${lists[i].title}</span>`;
+                var item = `
             <div id="data-row-${i}" class="task-wrapper flex-wrapper">
               <div style="flex:7">
                 ${title}
@@ -128,110 +86,135 @@
                 <button class="btn btn-sm btn-outline-dark delete">Delete</button>
               </div>
             </div>`;
-            wrapper.innerHTML += item
+                wrapper.innerHTML += item;
+              }
+              if (listsSnapshot.length > lists.length) {
+                for (var i = lists.length; i < listsSnapshot.length; i++) {
+                  $(`#data-row-${i}`).remove();
+                }
+              }
+              listSnapshot = lists;
+              for (var i in lists) {
+                var editBtn = document.getElementsByClassName("edit")[i];
+                var deleteBtn = document.getElementsByClassName("delete")[i];
+                var title = document.getElementsByClassName("title")[i];
+                editBtn.addEventListener(
+                  "click",
+                  (function (item) {
+                    return function () {
+                      editItem(item);
+                    };
+                  })(lists[i])
+                );
+                deleteBtn.addEventListener(
+                  "click",
+                  (function (item) {
+                    return function () {
+                      deleteItem(item);
+                    };
+                  })(lists[i])
+                );
+              }
+            });
+        }
+
+        var form = document.getElementById("form-wrapper");
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          console.log("Adding new list..");
+          var url = baseurl + "/api/list-create/";
+          if (activeItem != null) {
+            var url = baseurl + `/api/list-update/${activeItem.id}`;
+            activeItem = null;
           }
-          if (listsSnapshot.length > lists.length) {
-            for (var i = lists.length; i < listsSnapshot.length; i++) {
-              $(`#data-row-${i}`).remove()
+
+          var title = $("#title").val();
+          var user = $("#logged_in_userid").text();
+          console.log(url);
+          console.log(title);
+          console.log(user);
+
+          fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              "X-CSRFToken": csrftoken,
+            },
+            body: JSON.stringify({ title: title, user: user }),
+          }).then(function (response) {
+            console.log("Adding new list..Done");
+            buildLists();
+            document.getElementById("form").reset();
+          });
+        });
+
+        function editItem(item) {
+          activeItem = item;
+          document.getElementById("title").value = activeItem.title;
+        }
+
+        function deleteItem(item) {
+          console.log(`Deleting list with listid = [${item.id}]..`);
+          var url = baseurl + `/api/list-delete/${item.id}`;
+          fetch(url, {
+            method: "DELETE",
+            headers: {
+              "Content-type": "application/json",
+              "X-CSRFToken": csrftoken,
+            },
+          }).then((response) => {
+            console.log(`Deleting list with listid = [${item.id}]..Done`);
+            buildLists();
+          });
+        }
+
+        function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie !== "") {
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++) {
+              var cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === name + "=") {
+                cookieValue = decodeURIComponent(
+                  cookie.substring(name.length + 1)
+                );
+                break;
+              }
             }
           }
-          listSnapshot = lists
-          for (var i in lists) {
-            var editBtn = document.getElementsByClassName('edit')[i]
-            var deleteBtn = document.getElementsByClassName('delete')[i]
-            var title = document.getElementsByClassName('title')[i]
-            editBtn.addEventListener('click', (function (item) {
-              return function () {
-                editItem(item)
-              }
-            })(lists[i]))
-            deleteBtn.addEventListener('click', (function (item) {
-              return function () {
-                deleteItem(item)
-              }
-            })(lists[i]))
-          }
-        })
-      }
-
-      var form = document.getElementById('form-wrapper')
-      form.addEventListener('submit', function (e) {
-        e.preventDefault()
-        console.log('Adding new list..')
-        var url = baseurl + '/api/list-create/'
-        if (activeItem != null) {
-          var url = baseurl + `/api/list-update/${activeItem.id}`
-          activeItem = null
+          return cookieValue;
         }
-        
-        var title = $('#title').val()
-        var user = $('#logged_in_userid').text()
-        console.log(url);
-        console.log(title);
-        console.log(user);
-        
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-type': 'application/json',
-            'X-CSRFToken': csrftoken,
-          },
-          body: JSON.stringify({ 'title': title, 'user': user })
-        }).then(function (response) {
-          console.log('Adding new list..Done')
-          buildLists()
-          document.getElementById('form').reset()
-        })
-      })
 
-      function editItem(item) {
-          activeItem = item
-          document.getElementById('title').value = activeItem.title
-      }
-
-      function deleteItem(item) {
-        console.log(`Deleting list with listid = [${item.id}]..`)
-        var url = baseurl + `/api/list-delete/${item.id}`
-        fetch(url, {
-          method: 'DELETE',
-          headers: {
-            'Content-type': 'application/json',
-            'X-CSRFToken': csrftoken,
-          }
-        }).then((response) => {
-          console.log(`Deleting list with listid = [${item.id}]..Done`)
-          buildLists()
-        })
-      }
-
-      function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-          var cookies = document.cookie.split(';');
-          for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-            }
-          }
+        function getUserId() {
+          var url = baseurl + "/api/get-user-id/" + loggedInUsername;
+          console.log(`Fetching userid for username [${loggedInUsername}].. `);
+          fetch(url)
+            .then((resp) => resp.json())
+            .then(function (data) {
+              console.log(
+                `Fetching userid for username [${loggedInUsername}]..Done `
+              );
+              console.log(`UserID = [${data.id}]`);
+              $("#logged_in_userid").text(data.id);
+            });
         }
-        return cookieValue;
-      }
-
-      function getUserId() {
-        var url = baseurl + '/api/get-user-id/' + loggedInUsername;
-        console.log(`Fetching userid for username [${loggedInUsername}].. `)
-        fetch(url)
-        .then((resp) => resp.json())
-        .then(function (data) {
-          console.log(`Fetching userid for username [${loggedInUsername}]..Done `)
-          console.log(`UserID = [${data.id}]`)
-          $("#logged_in_userid").text(data.id);
-        })
-      }
-    });
+      });
     </script>
-</body>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
