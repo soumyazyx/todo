@@ -14,29 +14,37 @@
     <span class="d-none"> {{user.first_name}}</span>
     <span class="d-none"> {{user.last_name}}</span>
     <span class="d-none"> {{user.email}}</span>
-
-    <main>
-      <div id="form-wrapper">
-        <form id="form">
-          <div class="flex-wrapper">
-            <div>
-              <input
-                id="title"
-                class="form-control"
-                type="text"
-                name="title"
-                placeholder="Add new list"
-              />
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <main>
+            <div id="form-wrapper">
+              <form id="form">
+                <div class="flex-wrapper">
+                  <br />
+                  <div class="input-group mb-3">
+                    <input
+                      id="title"
+                      name="title"
+                      type="text"
+                      class="form-control"
+                      style="border: 1px solid #ccc;"
+                      placeholder="New list name"
+                    />
+                    <div class="input-group-append">
+                      <button class="btn btn-secondary" type="submit">
+                        Create
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
             </div>
-
-            <div>
-              <input id="submit" type="submit" value="Create" />
-            </div>
-          </div>
-        </form>
+            <div id="lists-wrapper"></div>
+          </main>
+        </div>
       </div>
-      <div id="lists-wrapper"></div>
-    </main>
+    </div>
 
     <script type="text/javascript">
       $(document).ready(function () {
@@ -58,6 +66,9 @@
           fetch(url)
             .then((resp) => resp.json())
             .then(function (data) {
+              console.log(`BEEP`);
+              $("#lists-wrapper").empty();
+              console.log(`BEEP...done`);
               console.log(`Fetching list/s using [${url}]..Done`);
               var lists = data;
               for (var i in lists) {
@@ -71,21 +82,21 @@
                   console.log(err);
                 }
                 var title = `<span class="title">${lists[i].title}</span>`;
-                var item = `
-            <div id="data-row-${i}" class="task-wrapper flex-wrapper">
-              <div style="flex:7">
-                ${title}
-              </div>
-              <div style="flex:1">
-                <a href=${href}  class="btn btn-sm btn-outline-primary view">View </a>
-              </div>
-              <div style="flex:1">
-                <button class="btn btn-sm btn-outline-info edit">Edit </button>
-              </div>
-              <div style="flex:1">
-                <button class="btn btn-sm btn-outline-dark delete">Delete</button>
-              </div>
-            </div>`;
+                var item = `        
+                
+                <a style="display:block; text-decoration:none" class="shadow-sm p-2 mb-2 bg-white rounded" href=${href}>
+                  <span id="data-row-${i}" class="task-wrapper">
+                    <span class="text-muted"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
+                    <span class="text-muted">${title}</span>
+                  </span>
+                  <!-- 
+                  <span class="btn-group" role="group" aria-label="Basic example" style="float:right">
+                    <a      style="border:none" class="btn btn-sm btn-outline-info" href=${href}>View</a>
+                    <button style="border:none" class="btn btn-sm btn-outline-warning edit">Edit</button>
+                    <button style="border:none" class="btn btn-sm btn-outline-danger delete">Delete</button>                    
+                  </span>
+                  -->
+                </a>`;
                 wrapper.innerHTML += item;
               }
               if (listsSnapshot.length > lists.length) {
