@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
@@ -70,22 +70,13 @@ def taskDelete(request, pk):
 
 @api_view(['GET'])
 def lists(request, username):
-    #     SELECT AL.ID AS LIST_ID, AL.TITLE AS LIST_TITLE, COUNT(TSK._LIST_ID) AS TASKS_COUNT
-    # FROM
-    #     PUBLIC.AUTH_USER AU,
-    #     PUBLIC.API_LIST AL,
-    #     PUBLIC.API_TASK TSK
-    # WHERE
-    #     AL.USER_ID = AU.ID
-    # AND
-    #     AL.ID = TSK._LIST_ID
-    # AND
-    #     AU.USERNAME = 'ranjita'
-    # GROUP BY
-    # AL.ID,TSK._LIST_ID
-
+    # query = f"SELECT AL.ID, USER_ID AS USER, AL.TITLE AS LIST_TITLE, COUNT(TSK._LIST_ID) AS TASKS_COUNT FROM PUBLIC.AUTH_USER AU,PUBLIC.API_LIST AL,PUBLIC.API_TASK TSK WHERE AL.USER_ID = AU.ID AND AL.ID = TSK._LIST_ID AND AU.USERNAME = 'soumya_ranjan' GROUP BY AL.ID,TSK._LIST_ID"
     query = f"SELECT AL.ID, AL.TITLE, AL.USER_ID FROM PUBLIC.AUTH_USER AU,PUBLIC.API_LIST AL WHERE AL.USER_ID = AU.ID AND AU.USERNAME = '{username}'"
     lists = List.objects.raw(query)
+    request.session["lists"] = {}
+    for lst in lists:
+        request.session["lists"][lst.id] = lst.title
+
     serializer = ListSerializer(lists, many=True)
     return Response(serializer.data)
 
@@ -127,5 +118,6 @@ def getUserId(request, username):
     query = f"SELECT ID,USERNAME,EMAIL FROM PUBLIC.AUTH_USER AU WHERE AU.USERNAME = '{username}'"
     querySet = User.objects.raw(query)
     for rec in querySet:
-        pass
-    return JsonResponse({'username': rec.username, 'id': rec.id})
+        username = rec.username
+        userid = rec.id
+    return JsonResponse({'username': username, 'id': userid})

@@ -4,14 +4,8 @@
   <nav class="navbar navbar-expand-sm navbar-light bg-light">
     {% if user.is_authenticated %}
     <span>
-      <img
-        width="35"
-        height="35"
-        style="border-radius: 70px;"
-        src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
-      />
-      <span> {{user.first_name}}</span>
-      <span> {{user.last_name}}</span>
+      <a id="back" href=""><i class="fas fa-arrow-left"></i></a>
+      <span>&nbsp;&nbsp;{{listtitle}}</span>
     </span>
     {% else %}
     <a id="google_login" href="/accounts/google/login">
@@ -40,8 +34,9 @@
 <span class="d-none" id="logged_in_username">{{user}}</span>
 <span class="d-none" id="logged_in_userid"></span>
 <span class="d-none" id="listid">{{listid}}</span>
-<span class="d-none"> {{user}}</span>
-<span class="d-none"> {{user.username}}</span>
-<span class="d-none"> {{user.first_name}}</span>
-<span class="d-none"> {{user.last_name}}</span>
-<span class="d-none"> {{user.email}}</span>
+<span class="d-none">{{listtitle}}</span>
+<span class="d-none">{{user}}</span>
+<span class="d-none">{{user.username}}</span>
+<span class="d-none">{{user.first_name}}</span>
+<span class="d-none">{{user.last_name}}</span>
+<span class="d-none">{{user.email}}</span>

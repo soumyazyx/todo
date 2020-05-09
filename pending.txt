@@ -1,17 +1,18 @@
+gets tasks count per list 
+add delete,edit list in tasks view
+create separate section for completed tasks 
+add jquery to first re-ender the list immmedilaty and update in background 
+add loader 
+add star 
+add reorderting
+add sharing
+removeing middle page while signig out 
+add google button for login 
+lists is populated even inf user not logged in  - check url 
+show msg that no tasks.list s afound 
+rest api security 
+study orm 
+COMPLETE 
 - add list name in the tasks view instead of user icon 
 - add the back button
-- gets tasks count per list 
-- add delete,edit list in tasks view
-- create separate section for completed tasks 
-- add jquery to first re-ender the list immmedilaty and update in background 
-- add loader 
-- add star 
-- add reorderting
-- add sharing
-- removeing middle page while signig out 
-- add google button for login 
-- lists is populated even inf user not logged in  - check url 
-- show msg that no tasks.list s afound 
-- rest api security 
-- study orm 
 
