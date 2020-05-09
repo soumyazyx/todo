@@ -5,7 +5,6 @@
   {% include 'frontend/head.html' %}
   <body>
     {% include 'frontend/lists_header.html' %}
-
     <div class="container">
       <div class="row">
         <div class="col-12">
@@ -139,6 +138,7 @@
           fetch(url)
             .then((resp) => resp.json())
             .then(function (data) {
+              $("#loader").hide('slow', function(){ $target.remove(); });
               console.log(`Fetching list/s using [${url}]..Done`);
               $("#lists-wrapper").empty();
               var lists = data;
@@ -171,27 +171,6 @@
                 }
               }
               listSnapshot = lists;
-              for (var i in lists) {
-                var editBtn = document.getElementsByClassName("edit")[i];
-                var deleteBtn = document.getElementsByClassName("delete")[i];
-                var title = document.getElementsByClassName("title")[i];
-                editBtn.addEventListener(
-                  "click",
-                  (function (item) {
-                    return function () {
-                      editItem(item);
-                    };
-                  })(lists[i])
-                );
-                deleteBtn.addEventListener(
-                  "click",
-                  (function (item) {
-                    return function () {
-                      deleteItem(item);
-                    };
-                  })(lists[i])
-                );
-              }
             });
         }
       });

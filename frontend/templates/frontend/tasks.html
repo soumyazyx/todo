@@ -49,6 +49,8 @@
         var activeItem = null;
         var tasks_snapshot = [];
 
+        
+
         $('#back').attr('href', baseurl);
         getUserId();
         buildTasks();
@@ -153,6 +155,7 @@
           fetch(url)
             .then((resp) => resp.json())
             .then(function (data) {
+              $("#loader").hide('slow', function(){ $target.remove(); });
               console.log(`Fetching tasks/s using [${url}]..Done`);
               console.log(data);
               $("#tasks-wrapper").empty();
