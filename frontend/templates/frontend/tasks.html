@@ -1,0 +1,246 @@
+{% load socialaccount %} {% providers_media_js %} {% load static %}
+
+<!DOCTYPE html>
+<html>
+  {% include 'frontend/head.html' %}
+  <body>
+    {% include 'frontend/tasks_header.html' %}
+
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <main>
+            <div id="task-container">
+              <div id="form-wrapper">
+                <br />
+                <form id="form">
+                  <div class="flex-wrapper">
+                    <div class="input-group mb-3">
+                      <input
+                        id="title"
+                        name="title"
+                        type="text"
+                        class="form-control"
+                        style="border: 1px solid #ccc;"
+                        placeholder="Add new task"
+                      />
+                      <div class="input-group-append">
+                        <button class="btn btn-secondary" type="submit">
+                          Add Task
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div id="tasks-wrapper"></div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      $(document).ready(function () {
+        var baseurl = window.location.origin;
+        var listid = $("#listid").text();
+        var loggedInUsername = $("#logged_in_username").text();
+        var csrftoken = getCookie("csrftoken");
+        var activeItem = null;
+        var tasks_snapshot = [];
+
+        $('#back').attr('href', baseurl);
+        getUserId();
+        buildTasks();
+
+        var form = document.getElementById("form-wrapper");
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          console.log("Form submitted");
+          var url = baseurl + "/api/task-create/";
+          if (activeItem != null) {
+            var url = baseurl + `/api/task-update/${activeItem.id}`;
+            activeItem = null;
+          }
+
+          var title = document.getElementById("title").value;
+          fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              "X-CSRFToken": csrftoken,
+            },
+            body: JSON.stringify({ title: title, _list: listid }),
+          }).then(function (response) {
+            buildTasks();
+            document.getElementById("form").reset();
+          });
+        });
+
+        function editItem(item) {
+          console.log("Item clicked:", item);
+          activeItem = item;
+          document.getElementById("title").value = activeItem.title;
+        }
+
+        function deleteItem(item) {
+          console.log("Delete clicked");
+          fetch(baseurl + `/api/task-delete/${item.id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-type": "application/json",
+              "X-CSRFToken": csrftoken,
+            },
+          }).then((response) => {
+            buildTasks();
+          });
+        }
+
+        function strikeUnstrike(item) {
+          console.log("Strike clicked");
+          item.completed = !item.completed;
+          fetch(baseurl + `/api/task-update/${item.id}`, {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              "X-CSRFToken": csrftoken,
+            },
+            body: JSON.stringify({
+              title: item.title,
+              completed: item.completed,
+            }),
+          }).then((response) => {
+            buildTasks();
+          });
+        }
+
+        function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie !== "") {
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++) {
+              var cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === name + "=") {
+                cookieValue = decodeURIComponent(
+                  cookie.substring(name.length + 1)
+                );
+                break;
+              }
+            }
+          }
+          return cookieValue;
+        }
+
+        function getUserId() {
+          var url = baseurl + "/api/get-user-id/" + loggedInUsername;
+          console.log(`Fetching userid for username [${loggedInUsername}].. `);
+          fetch(url)
+            .then((resp) => resp.json())
+            .then(function (data) {
+              console.log(
+                `Fetching userid for username [${loggedInUsername}]..Done `
+              );
+              console.log(`UserID = [${data.id}]`);
+              $("#logged_in_userid").text(data.id);
+            });
+        }
+
+        function buildTasks() {
+          var url = baseurl + `/api/tasks/${listid}`;
+          var wrapper = document.getElementById("tasks-wrapper");
+          console.log(`Fetching tasks/s using [${url}]..`);
+          fetch(url)
+            .then((resp) => resp.json())
+            .then(function (data) {
+              console.log(`Fetching tasks/s using [${url}]..Done`);
+              console.log(data);
+              $("#tasks-wrapper").empty();
+              var tasks = data;
+
+              for (var i in tasks) {
+                var item;
+                var taskid = tasks[i].id;
+                var completed = tasks[i].completed;
+                var title = `<span class="title">${tasks[i].title}</span>`;
+                if (tasks[i].completed == true) {
+                  item = `
+                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded">
+                    <span id="data-row-${i}" class="task-wrapper">
+                      <input type="checkbox"  class="cb" checked="checked">
+                      <span class="text-muted"><del>${title}</del></span>
+                      <span class="text-danger" style="float: right"><i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;</span>
+                    </span>
+                  </div>`;
+                } else {
+                  item = `
+                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded">
+                    <span id="data-row-${i}" class="task-wrapper">
+                      <input type="checkbox" class="cb">
+                      <span class="text-muted">${title}</span>
+                      <span class="text-danger" style="float: right"><i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;</span>
+                    </span>
+                  </div>`;
+                }
+                wrapper.innerHTML += item;
+              }
+              /*
+              if (tasks_snapshot.length > tasks.length) {
+                for (var i = tasks.length; i < tasks_snapshot.length; i++) {
+                  document.getElementById(`data-row-${i}`).remove();
+                }
+              }
+              */
+              tasks_snapshot = tasks;
+              for (var i in tasks) {
+                var deleteBtn = document.getElementsByClassName("delete")[i];
+                var title = document.getElementsByClassName("title")[i];
+                var checkbox = document.getElementsByClassName("cb")[i];
+                deleteBtn.addEventListener(
+                  "click",
+                  (function (item) {
+                    return function () {
+                      deleteItem(item);
+                    };
+                  })(tasks[i])
+                );
+
+                title.addEventListener(
+                  "click",
+                  (function (item) {
+                    return function () {
+                      editItem(item);
+                    };
+                  })(tasks[i])
+                );
+
+                checkbox.addEventListener(
+                  "change",
+                  (function (item) {
+                    return function () {
+                      strikeUnstrike(item);
+                    };
+                  })(tasks[i])
+                );
+              }
+            });
+        }
+      });
+    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
