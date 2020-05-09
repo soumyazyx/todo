@@ -44,12 +44,11 @@
       $(document).ready(function () {
         var baseurl = window.location.origin;
         var listid = $("#listid").text();
+        var listtitle = $("#listtitle").text();
         var loggedInUsername = $("#logged_in_username").text();
         var csrftoken = getCookie("csrftoken");
         var activeItem = null;
         var tasks_snapshot = [];
-
-        
 
         $('#back').attr('href', baseurl);
         getUserId();
@@ -228,6 +227,42 @@
               }
             });
         }
+
+        function deleteList(listid) {
+          
+          console.log(listid);
+          /*
+          console.log(`Deleting list with listid = [${item.id}]..`);
+          var url = baseurl + `/api/list-delete/${item.id}`;
+          fetch(url, {
+            method: "DELETE",
+            headers: {
+              "Content-type": "application/json",
+              "X-CSRFToken": csrftoken,
+            },
+          }).then((response) => {
+            console.log(`Deleting list with listid = [${item.id}]..Done`);
+            buildLists();
+          }); */
+        }
+        $("#deletelist").click(function(){
+          if (confirm(`Are you sure to delete list [${listtitle}]?`)) {
+            console.log(`Deleting list[${listtitle}] with listid=[${listid}]..`);
+            var url = baseurl + `/api/list-delete/${listid}`;
+            fetch(url, {
+              method: "DELETE",
+              headers: {
+                "Content-type": "application/json",
+                "X-CSRFToken": csrftoken,
+              },
+            }).then((response) => {
+              console.log(`Deleting list[${listtitle}] with listid=[${listid}]..Done`);
+              //buildLists();
+              window.location.href = baseurl;
+            });
+          }
+          return false;
+        });
       });
     </script>
     <script
