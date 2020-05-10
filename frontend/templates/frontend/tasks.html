@@ -80,6 +80,7 @@
             },
             body: JSON.stringify({ title: title, _list: listid }),
           }).then(function (response) {
+            console.log("Adding task..Done");
             buildTasks();
             document.getElementById("form").reset();
           });
@@ -106,7 +107,7 @@
         }
 
         function strikeUnstrike(item) {
-          console.log("Strike clicked");
+          console.log("Toglling complete status..");
           
           $("#task-loader-"+item.id).removeClass("d-none");
           item.completed = !item.completed;
@@ -121,6 +122,8 @@
               completed: item.completed,
             }),
           }).then((response) => {
+            console.log("Toglling complete status..Done");
+            console.log("Rebuilding tasks")
             buildTasks();
           });
         }
@@ -167,7 +170,6 @@
               $("#loader").hide('slow', function(){ $target.remove(); });
               $("#addTaskBtn").html('Add Task')
               console.log(`Fetching tasks/s using [${url}]..Done`);
-              console.log(data);
               $("#tasks-wrapper").empty();
               var tasks = data;
 

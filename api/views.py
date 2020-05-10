@@ -32,7 +32,7 @@ def apiOverview(request):
 
 @api_view(['GET'])
 def tasks(request, listid):
-    tasks = Task.objects.filter(_list_id=listid)
+    tasks = Task.objects.filter(_list_id=listid).order_by('completed', '-id')
     serializer = TaskSerializer(tasks, many=True)
     return Response(serializer.data)
 
@@ -71,7 +71,7 @@ def taskDelete(request, pk):
 @api_view(['GET'])
 def lists(request, username):
     # query = f"SELECT AL.ID, USER_ID AS USER, AL.TITLE AS LIST_TITLE, COUNT(TSK._LIST_ID) AS TASKS_COUNT FROM PUBLIC.AUTH_USER AU,PUBLIC.API_LIST AL,PUBLIC.API_TASK TSK WHERE AL.USER_ID = AU.ID AND AL.ID = TSK._LIST_ID AND AU.USERNAME = 'soumya_ranjan' GROUP BY AL.ID,TSK._LIST_ID"
-    query = f"SELECT AL.ID, AL.TITLE, AL.USER_ID FROM PUBLIC.AUTH_USER AU,PUBLIC.API_LIST AL WHERE AL.USER_ID = AU.ID AND AU.USERNAME = '{username}'"
+    query = f"SELECT AL.ID, AL.TITLE, AL.USER_ID FROM PUBLIC.AUTH_USER AU,PUBLIC.API_LIST AL WHERE AL.USER_ID = AU.ID AND AU.USERNAME = '{username}' ORDER BY AL.ID DESC"
     lists = List.objects.raw(query)
     request.session["lists"] = {}
     for lst in lists:
