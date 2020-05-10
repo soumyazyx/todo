@@ -76,7 +76,6 @@ def lists(request, username):
     request.session["lists"] = {}
     for lst in lists:
         request.session["lists"][lst.id] = lst.title
-
     serializer = ListSerializer(lists, many=True)
     return Response(serializer.data)
 

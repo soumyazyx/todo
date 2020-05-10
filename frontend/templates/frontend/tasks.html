@@ -25,7 +25,7 @@
                         placeholder="Add new task"
                       />
                       <div class="input-group-append">
-                        <button class="btn btn-secondary" type="submit">
+                        <button id="addTaskBtn" class="btn btn-secondary" type="submit">
                           Add Task
                         </button>
                       </div>
@@ -44,6 +44,7 @@
       $(document).ready(function () {
         var baseurl = window.location.origin;
         var listid = $("#listid").text();
+        var listtitle = $("#listtitle").text();
         var loggedInUsername = $("#logged_in_username").text();
         var csrftoken = getCookie("csrftoken");
         var activeItem = null;
@@ -57,6 +58,7 @@
         form.addEventListener("submit", function (e) {
           e.preventDefault();
           console.log("Form submitted");
+          $("#addTaskBtn").html('Adding Task <div class="spinner-border spinner-border-sm"></div>')
           var url = baseurl + "/api/task-create/";
           if (activeItem != null) {
             var url = baseurl + `/api/task-update/${activeItem.id}`;
@@ -84,7 +86,8 @@
         }
 
         function deleteItem(item) {
-          console.log("Delete clicked");
+          console.log(`Deleting item with id[${item.id}]`);
+          $("#task-delete-loader-"+ item.id).html('Deleting <div class="spinner-border spinner-border-sm"></div>')
           fetch(baseurl + `/api/task-delete/${item.id}`, {
             method: "DELETE",
             headers: {
@@ -98,6 +101,8 @@
 
         function strikeUnstrike(item) {
           console.log("Strike clicked");
+          
+          $("#task-loader-"+item.id).removeClass("d-none");
           item.completed = !item.completed;
           fetch(baseurl + `/api/task-update/${item.id}`, {
             method: "POST",
@@ -153,6 +158,8 @@
           fetch(url)
             .then((resp) => resp.json())
             .then(function (data) {
+              $("#loader").hide('slow', function(){ $target.remove(); });
+              $("#addTaskBtn").html('Add Task')
               console.log(`Fetching tasks/s using [${url}]..Done`);
               console.log(data);
               $("#tasks-wrapper").empty();
@@ -169,7 +176,14 @@
                     <span id="data-row-${i}" class="task-wrapper">
                       <input type="checkbox"  class="cb" checked="checked">
                       <span class="text-muted"><del>${title}</del></span>
-                      <span class="text-danger" style="float: right"><i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;</span>
+                      <span class="d-none" id="task-loader-${taskid}">
+                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                      </span>
+                      <span id="task-delete-loader-${taskid}" class="text-danger" style="float: right">
+                        <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
+                      </span>
                     </span>
                   </div>`;
                 } else {
@@ -178,7 +192,14 @@
                     <span id="data-row-${i}" class="task-wrapper">
                       <input type="checkbox" class="cb">
                       <span class="text-muted">${title}</span>
-                      <span class="text-danger" style="float: right"><i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;</span>
+                      <span class="d-none" id="task-loader-${taskid}">
+                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                      </span>
+                      <span  id="task-delete-loader-${taskid}" class="text-danger" style="float: right">
+                        <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
+                      </span>
                     </span>
                   </div>`;
                 }
@@ -225,6 +246,45 @@
               }
             });
         }
+
+        function deleteList(listid) {
+          
+          console.log(listid);
+          /*
+          console.log(`Deleting list with listid = [${item.id}]..`);
+          var url = baseurl + `/api/list-delete/${item.id}`;
+          fetch(url, {
+            method: "DELETE",
+            headers: {
+              "Content-type": "application/json",
+              "X-CSRFToken": csrftoken,
+            },
+          }).then((response) => {
+            console.log(`Deleting list with listid = [${item.id}]..Done`);
+            buildLists();
+          }); */
+        }
+        $("#deletelist").click(function(){
+          if (confirm(`Are you sure to delete list [${listtitle}]?`)) {
+            $("#loader-text").text(`Deleting list [${listtitle}]`);
+            $("#loader").show();
+            
+            console.log(`Deleting list[${listtitle}] with listid=[${listid}]..`);
+            var url = baseurl + `/api/list-delete/${listid}`;
+            fetch(url, {
+              method: "DELETE",
+              headers: {
+                "Content-type": "application/json",
+                "X-CSRFToken": csrftoken,
+              },
+            }).then((response) => {
+              console.log(`Deleting list[${listtitle}] with listid=[${listid}]..Done`);
+              //buildLists();
+              window.location.href = baseurl;
+            });
+          }
+          return false;
+        });
       });
     </script>
     <script
