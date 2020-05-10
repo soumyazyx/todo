@@ -1,10 +1,13 @@
-{% load socialaccount %} {% providers_media_js %} {% load static %}
+{% load socialaccount %} 
+{% providers_media_js %} 
+{% load static %}
 
 <!DOCTYPE html>
 <html>
   {% include 'frontend/head.html' %}
   <body>
     {% include 'frontend/lists_header.html' %}
+    {% if user.is_authenticated %}
     <div class="container">
       <div class="row">
         <div class="col-12">
@@ -23,7 +26,7 @@
                       placeholder="New list name"
                     />
                     <div class="input-group-append">
-                      <button class="btn btn-secondary" type="submit">
+                      <button id="createListBtn" class="btn btn-secondary" type="submit">
                         Create
                       </button>
                     </div>
@@ -36,14 +39,21 @@
         </div>
       </div>
     </div>
-
+    <script>
+    </script>
     <script type="text/javascript">
+      function showLoader(listid) {
+        $("#list-loader-"+listid).removeClass("d-none");
+        return true;
+      }
+    
       $(document).ready(function () {
         var baseurl = window.location.origin;
         var loggedInUsername = $("#logged_in_username").text();
         var csrftoken = getCookie("csrftoken");
         var activeItem = null;
         var listsSnapshot = [];
+        
 
         getUserId();
         buildLists();
@@ -52,6 +62,7 @@
         form.addEventListener("submit", function (e) {
           e.preventDefault();
           console.log("Adding new list..");
+          $("#createListBtn").html('Creating list..<div class="spinner-border spinner-border-sm"></div>')
           var url = baseurl + "/api/list-create/";
           if (activeItem != null) {
             var url = baseurl + `/api/list-update/${activeItem.id}`;
@@ -130,50 +141,68 @@
             });
         }
 
+
         function buildLists() {
           var url = baseurl + "/api/lists/" + loggedInUsername;
           var wrapper = document.getElementById("lists-wrapper");
 
           console.log(`Fetching list/s using [${url}]..`);
           fetch(url)
-            .then((resp) => resp.json())
-            .then(function (data) {
-              $("#loader").hide('slow', function(){ $target.remove(); });
-              console.log(`Fetching list/s using [${url}]..Done`);
-              $("#lists-wrapper").empty();
-              var lists = data;
-              for (var i in lists) {
-                var listid = lists[i].id;
-                var title = lists[i].title;
-                var user = lists[i].user;
-                var href = baseurl + `/list/${listid}`;
-                var title = `<span class="title">${lists[i].title}</span>`;
-                var item = `        
-                
-                <a style="display:block; text-decoration:none" class="shadow-sm p-2 mb-2 bg-white rounded" href=${href}>
-                  <span id="data-row-${i}" class="task-wrapper">
-                    <span class="text-muted"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
-                    <span class="text-muted">${title}</span>
+          .then((resp) => resp.json())
+          .then(function (data) {
+            console.log(`Fetching list/s using [${url}]..Done`);
+            $("#loader").hide('slow', function(){ $target.remove(); });
+            $("#createListBtn").html('Create');              
+            $("#lists-wrapper").empty();
+            var lists = data;
+            for (var i in lists) {
+              var listid = lists[i].id;
+              var title = lists[i].title;
+              var user = lists[i].user;
+              var href = baseurl + `/list/${listid}`;
+              var title = `<span class="title">${lists[i].title}</span>`;
+              var item = `        
+              
+              <a
+                style="display: block; text-decoration: none;"
+                class="shadow-sm p-2 mb-2 bg-white rounded"
+                href="${href}"
+                id="${listid}"
+                onclick="showLoader(${listid}); return true;"
+              >
+                <span id="data-row-${i}" class="task-wrapper">
+                  <span class="text-muted"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
+                  <span class="text-muted">
+                    ${title}
+                    <span class="d-none" id="list-loader-${listid}">
+                      <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                      <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                      <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                    </span>
                   </span>
-                  
-                  <!-- 
-                  <span class="btn-group" role="group" aria-label="Basic example" style="float:right">
-                    <a      style="border:none" class="btn btn-sm btn-outline-info" href=${href}>View</a>
-                    <button style="border:none" class="btn btn-sm btn-outline-warning edit">Edit</button>
-                    <button style="border:none" class="btn btn-sm btn-outline-danger delete">Delete</button>                    
-                  </span>
-                  -->
-                </a>`;
-                wrapper.innerHTML += item;
+                </span>
+
+                <!-- 
+                <span class="btn-group" role="group" aria-label="Basic example" style="float:right">
+                <a      style="border:none" class="btn btn-sm btn-outline-info" href=${href}>View</a>
+                <button style="border:none" class="btn btn-sm btn-outline-warning edit">Edit</button>
+                <button style="border:none" class="btn btn-sm btn-outline-danger delete">Delete</button>                    
+                </span>
+                -->
+              </a>`;
+              wrapper.innerHTML += item;
+            }
+            if (listsSnapshot.length > lists.length) {
+              for (var i = lists.length; i < listsSnapshot.length; i++) {
+                $(`#data-row-${i}`).remove();
               }
-              if (listsSnapshot.length > lists.length) {
-                for (var i = lists.length; i < listsSnapshot.length; i++) {
-                  $(`#data-row-${i}`).remove();
-                }
-              }
-              listSnapshot = lists;
-            });
+            }
+            listSnapshot = lists;
+          });
         }
+
+        
+
       });
     </script>
     <script
@@ -191,5 +220,6 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+    {% endif %}
   </body>
 </html>
