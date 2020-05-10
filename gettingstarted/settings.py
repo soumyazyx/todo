@@ -151,5 +151,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = "/static/"
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
-
+ACCOUNT_LOGOUT_ON_GET = True
 django_heroku.settings(locals())
