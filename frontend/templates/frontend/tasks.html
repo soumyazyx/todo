@@ -22,7 +22,7 @@
                         type="text"
                         class="form-control"
                         style="border: 1px solid #ccc;"
-                        placeholder="Add new task"
+                        placeholder="Add a task"
                       />
                       <div class="input-group-append">
                         <button id="addTaskBtn" class="btn btn-secondary" type="submit">
@@ -57,7 +57,13 @@
         var form = document.getElementById("form-wrapper");
         form.addEventListener("submit", function (e) {
           e.preventDefault();
-          console.log("Form submitted");
+          console.log("Adding task..");
+          var inp = $("#title").val();
+          if(jQuery.trim(inp).length == 0){
+            //do something
+            alert("Task can't be empty!");
+            return false;
+          }
           $("#addTaskBtn").html('Adding Task <div class="spinner-border spinner-border-sm"></div>')
           var url = baseurl + "/api/task-create/";
           if (activeItem != null) {

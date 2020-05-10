@@ -43,33 +43,31 @@
     </span>
   </nav>
 </header>
-<div>
-  <div
-    class="card card-body"
-    style="
-      max-width: 400px;
-      margin: auto;
-      color: grey;
-      background: transparent;
-      border: none;
-    "
-  >
-    <a
-      class="btn btn-dark m-1"
-      role="button"
-      style="text-transform: none;"
-      id="google_login"
-      href="/accounts/google/login"
-    >
-      <img
-        width="20px"
-        style="margin-bottom: 3px; margin-right: 5px;"
-        alt="Google sign-in"
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
-      />Sign in
-    </a>
-  </div>
+<div
+  class="card card-body text-center p-2"
+  style="
+    max-width: 400px;
+    margin: auto;
+    color: grey;
+    background: transparent;
+    border: none;"
+> <span class="text-info">Sign in to continue to todozyx</span>
+  <a
+    class="btn btn-dark m-1"
+    role="button"
+    style="text-transform: none;"
+    id="google_login"
+    href="/accounts/google/login"
+  >      
+    <img
+      width="20px"
+      style="margin-bottom: 3px; margin-right: 5px;"
+      alt="Google sign-in"
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
+    />Sign in
+  </a>
 </div>
+
 {% endif %}
 <!-- hidden spans -->
 <span class="d-none" id="logged_in_username">{{user}}</span>

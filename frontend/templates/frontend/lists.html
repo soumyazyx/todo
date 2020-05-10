@@ -27,7 +27,7 @@
                     />
                     <div class="input-group-append">
                       <button id="createListBtn" class="btn btn-secondary" type="submit">
-                        Create
+                        Create List
                       </button>
                     </div>
                   </div>
@@ -62,18 +62,19 @@
         form.addEventListener("submit", function (e) {
           e.preventDefault();
           console.log("Adding new list..");
-          $("#createListBtn").html('Creating list..<div class="spinner-border spinner-border-sm"></div>')
+          if($.trim($('#title').val()) == ''){
+            alert('List name can not be left blank');
+            return false;
+          }
+          $("#createListBtn").html('Creating list <div class="spinner-border spinner-border-sm"></div>')
           var url = baseurl + "/api/list-create/";
           if (activeItem != null) {
             var url = baseurl + `/api/list-update/${activeItem.id}`;
             activeItem = null;
           }
-
           var title = $("#title").val();
           var user = $("#logged_in_userid").text();
-          console.log(url);
-          console.log(title);
-          console.log(user);
+          
 
           fetch(url, {
             method: "POST",
@@ -152,9 +153,15 @@
           .then(function (data) {
             console.log(`Fetching list/s using [${url}]..Done`);
             $("#loader").hide('slow', function(){ $target.remove(); });
-            $("#createListBtn").html('Create');              
+            $("#createListBtn").html('Create List');              
             $("#lists-wrapper").empty();
             var lists = data;
+            console.log(lists);
+            console.log(lists.length);
+            if (lists.length == 0){
+              $("#loader").html('<div class="alert alert-warning" role="alert">It seems a bit lonely here! Create a list to continue</div>');
+              $("#loader").show();
+            }
             for (var i in lists) {
               var listid = lists[i].id;
               var title = lists[i].title;
