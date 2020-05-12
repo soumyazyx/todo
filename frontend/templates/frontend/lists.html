@@ -75,14 +75,14 @@
           var title = $("#title").val();
           var user = $("#logged_in_userid").text();
           
-
+          console.log(`URL used: [${url}]`);
           fetch(url, {
             method: "POST",
             headers: {
               "Content-type": "application/json",
               "X-CSRFToken": csrftoken,
             },
-            body: JSON.stringify({ title: title, user: user }),
+            body: JSON.stringify({ title: title, users: [user] }),
           }).then(function (response) {
             console.log("Adding new list..Done");
             buildLists();

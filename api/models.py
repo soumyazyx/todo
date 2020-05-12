@@ -3,7 +3,7 @@ from django.conf import settings
 
 
 class List(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL)
     title = models.CharField(max_length=200)
 
     def __str__(self):
