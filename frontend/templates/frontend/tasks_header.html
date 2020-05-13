@@ -1,14 +1,15 @@
 {% load socialaccount %}
 
 <header class="header">
-  <nav
-    class="navbar navbar-expand-sm"
-    style="background: white; padding: 0.25rem;"
-  >
+  <nav class="navbar navbar-expand-sm" style="background: white;">
     {% if user.is_authenticated %}
     <span>
       <a id="back" href=""><i class="fas fa-arrow-left"></i></a>
-      <button class="btn btn-light dropdown-toggle" data-toggle="dropdown">
+      <button
+        class="dropdown-toggle"
+        data-toggle="dropdown"
+        style="background: none; border: none;"
+      >
         <span>&nbsp;&nbsp;{{listtitle}}</span>
         <span class="caret"></span>
       </button>
