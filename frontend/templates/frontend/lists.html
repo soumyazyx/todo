@@ -8,11 +8,12 @@
   <body>
     {% include 'frontend/lists_header.html' %}
     {% if user.is_authenticated %}
+    <div id="form-wrapper">
     <div class="container">
+      
       <div class="row">
         <div class="col-12">
-          <main>
-            <div id="form-wrapper">
+            <main>      
               <form id="form">
                 <div class="flex-wrapper">
                   <br />
@@ -33,7 +34,16 @@
                   </div>
                 </div>
               </form>
-            </div>
+            </main>
+          </div>
+        </div>
+    
+      
+      
+      
+      <div class="row">
+        <div class="col-12">
+          <main>
             <div id="lists-wrapper"></div>
           </main>
         </div>
