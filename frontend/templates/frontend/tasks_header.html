@@ -1,37 +1,42 @@
 {% load socialaccount %}
 
 <header class="header">
-  <nav class="navbar navbar-expand-sm navbar-light bg-light">
+  <nav class="navbar navbar-expand-sm" style="background: white;">
     {% if user.is_authenticated %}
     <span>
       <a id="back" href=""><i class="fas fa-arrow-left"></i></a>
-      <span>&nbsp;&nbsp;{{listtitle}}</span>
+      <button
+        class="dropdown-toggle"
+        data-toggle="dropdown"
+        style="background: none; border: none;"
+      >
+        <span>&nbsp;&nbsp;{{listtitle}}</span>
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu m-1 p-1 text-muted" style="font-size: normal;">
+        <li>{{user.first_name}} {{user.last_name}}</li>
+        <li>{{user.email}}</li>
+        <div class="dropdown-divider"></div>
+        <li class="nav-item mb-1">
+          <a class="text-danger btn btn-block btn-light" id="deletelist"
+            >Delete list</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            id="logout"
+            class="btn btn-light btn-block text-warning"
+            href="/accounts/logout"
+            >Logout</a
+          >
+        </li>
+      </ul>
     </span>
+
     {% else %}
     <a id="google_login" href="/accounts/google/login">
       Sign in with Google
     </a>
-    {% endif %}
-    <button
-      class="navbar-toggler"
-      data-toggle="collapse"
-      data-target="#navbarMenu"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    {% if user.is_authenticated %}
-    <div class="collapse navbar-collapse" id="navbarMenu">
-      <ul class="navbar-nav">
-        <!-- 
-        <li class="nav-item">
-          <a href="/accounts/logout">Edit list</a>
-        </li>
-        -->
-        <li class="nav-item">
-          <a class="btn btn-block btn-sm btn-outline-danger" id="deletelist">Delete list</a>
-        </li>
-      </ul>
-    </div>
     {% endif %}
   </nav>
 </header>

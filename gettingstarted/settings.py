@@ -48,17 +48,12 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     # PROVIDERS
-    "allauth.socialaccount.providers.google"
+    "allauth.socialaccount.providers.google",
 ]
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
+    "google": {
+        "SCOPE": ["profile", "email",],
+        "AUTH_PARAMS": {"access_type": "online",},
     }
 }
 
@@ -85,20 +80,17 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-
                 # `allauth` needs this from django
-                'django.template.context_processors.request',
+                "django.template.context_processors.request",
             ]
         },
     }
 ]
-
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
-
+    "django.contrib.auth.backends.ModelBackend",
     # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
+    "allauth.account.auth_backends.AuthenticationBackend",
 )
 
 WSGI_APPLICATION = "gettingstarted.wsgi.application"
@@ -113,7 +105,7 @@ DATABASES = {
         "USER": "sugqycwzipcmym",
         "PORT": "5432",
         "PASSWORD": "e64d00efbc35c4cd3b9c5cbfa9c92a58e77739652c79da4ba230db1fdfc6e588",
-        "ENGINE": "django.db.backends.postgresql"
+        "ENGINE": "django.db.backends.postgresql",
     }
 }
 
@@ -147,9 +139,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/static/"
 SITE_ID = 1
-LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = "/"
+LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_ON_GET = True
 django_heroku.settings(locals())
