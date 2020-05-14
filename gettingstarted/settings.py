@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     # PROVIDERS
     "allauth.socialaccount.providers.google",
-    "allauth.socialaccount.providers.facebook",
 ]
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
