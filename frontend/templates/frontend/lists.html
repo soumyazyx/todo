@@ -1,19 +1,15 @@
-{% load socialaccount %} 
-{% providers_media_js %} 
-{% load static %}
+{% load socialaccount %} {% providers_media_js %} {% load static %}
 
 <!DOCTYPE html>
 <html>
   {% include 'frontend/head.html' %}
   <body>
-    {% include 'frontend/lists_header.html' %}
-    {% if user.is_authenticated %}
+    {% include 'frontend/lists_header.html' %} {% if user.is_authenticated %}
     <div id="form-wrapper">
-    <div class="container">
-      
-      <div class="row">
-        <div class="col-12">
-            <main>      
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <main>
               <form id="form">
                 <div class="flex-wrapper">
                   <br />
@@ -27,7 +23,11 @@
                       placeholder="New list name"
                     />
                     <div class="input-group-append">
-                      <button id="createListBtn" class="btn btn-secondary" type="submit">
+                      <button
+                        id="createListBtn"
+                        class="btn btn-secondary"
+                        type="submit"
+                      >
                         Create List
                       </button>
                     </div>
@@ -37,137 +37,92 @@
             </main>
           </div>
         </div>
-    
-      
-      
-      
-      <div class="row">
-        <div class="col-12">
-          <main>
-            <div id="lists-wrapper"></div>
-          </main>
+        <!-- /row -->
+        <div class="row">
+          <div class="col-12">
+            <main>
+              <div id="lists-wrapper"></div>
+            </main>
+          </div>
         </div>
+        <!-- /row -->
       </div>
+      <!-- /container -->
     </div>
+    <!-- /form-wrapper -->
     <script>
-    </script>
-    <script type="text/javascript">
+      var baseurl = window.location.origin;
+      var activeItem = null;
+      var listsSnapshot = [];
+      var loggedInUsername = $("#logged_in_username").text();
+      var csrftoken = getCookie("csrftoken");
+      var current = null;
+      var previous = null;
+
       function showLoader(listid) {
-        $("#list-loader-"+listid).removeClass("d-none");
+        $("#list-loader-" + listid).removeClass("d-none");
         return true;
       }
-    
-      $(document).ready(function () {
-        var baseurl = window.location.origin;
-        var loggedInUsername = $("#logged_in_username").text();
-        var csrftoken = getCookie("csrftoken");
-        var activeItem = null;
-        var listsSnapshot = [];
-        
 
-        getUserId();
-        buildLists();
-
-        var form = document.getElementById("form-wrapper");
-        form.addEventListener("submit", function (e) {
-          e.preventDefault();
-          console.log("Adding new list..");
-          if($.trim($('#title').val()) == ''){
-            alert('List name can not be left blank');
-            return false;
-          }
-          $("#createListBtn").html('Creating list <div class="spinner-border spinner-border-sm"></div>')
-          var url = baseurl + "/api/list-create/";
-          if (activeItem != null) {
-            var url = baseurl + `/api/list-update/${activeItem.id}`;
-            activeItem = null;
-          }
-          var title = $("#title").val();
-          var user = $("#logged_in_userid").text();
-          
-          console.log(`URL used: [${url}]`);
-          fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-              "X-CSRFToken": csrftoken,
-            },
-            body: JSON.stringify({ title: title, users: [user] }),
-          }).then(function (response) {
-            console.log("Adding new list..Done");
-            buildLists();
-            document.getElementById("form").reset();
-          });
-        });
-
-        function editItem(item) {
-          activeItem = item;
-          document.getElementById("title").value = activeItem.title;
-        }
-
-        function deleteItem(item) {
-          console.log(`Deleting list with listid = [${item.id}]..`);
-          var url = baseurl + `/api/list-delete/${item.id}`;
-          fetch(url, {
-            method: "DELETE",
-            headers: {
-              "Content-type": "application/json",
-              "X-CSRFToken": csrftoken,
-            },
-          }).then((response) => {
-            console.log(`Deleting list with listid = [${item.id}]..Done`);
-            buildLists();
-          });
-        }
-
-        function getCookie(name) {
-          var cookieValue = null;
-          if (document.cookie && document.cookie !== "") {
-            var cookies = document.cookie.split(";");
-            for (var i = 0; i < cookies.length; i++) {
-              var cookie = cookies[i].trim();
-              // Does this cookie string begin with the name we want?
-              if (cookie.substring(0, name.length + 1) === name + "=") {
-                cookieValue = decodeURIComponent(
-                  cookie.substring(name.length + 1)
-                );
-                break;
-              }
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          var cookies = document.cookie.split(";");
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1)
+              );
+              break;
             }
           }
-          return cookieValue;
         }
+        return cookieValue;
+      }
 
-        function getUserId() {
-          var url = baseurl + "/api/get-user-id/" + loggedInUsername;
-          console.log(`Fetching userid for username [${loggedInUsername}].. `);
-          fetch(url)
-            .then((resp) => resp.json())
-            .then(function (data) {
-              console.log(
-                `Fetching userid for username [${loggedInUsername}]..Done `
-              );
-              console.log(`UserID = [${data.id}]`);
-              $("#logged_in_userid").text(data.id);
-            });
-        }
-
-
-        function buildLists() {
-          var url = baseurl + "/api/lists/" + loggedInUsername;
-          var wrapper = document.getElementById("lists-wrapper");
-
-          console.log(`Fetching list/s using [${url}]..`);
-          fetch(url)
+      function getUserId() {
+        var url = `${baseurl}/api/get-user-id/${loggedInUsername}`;
+        console.log(`Fetching userid for username [${loggedInUsername}].. `);
+        fetch(url)
           .then((resp) => resp.json())
           .then(function (data) {
-            console.log(`Fetching list/s using [${url}]..Done`);
-            $("#loader").hide('slow', function(){ $target.remove(); });
-            $("#createListBtn").html('Create List');              
+            console.log(
+              `Fetching userid for username [${loggedInUsername}]..Done`
+            );
+            console.log(`UserID = [${data.id}]`);
+            $("#logged_in_userid").text(data.id);
+          });
+        //
+      }
+
+      function buildLists() {
+        var url = baseurl + "/api/lists/" + loggedInUsername;
+        var wrapper = document.getElementById("lists-wrapper");
+        // console.log(`Fetching list/s using [${url}]..`);
+        fetch(url)
+          .then((resp) => resp.json())
+          .then(function (data) {
+            // console.log(`Fetching list/s using [${url}]..Done`);
+            current = JSON.stringify(data);
+            if (!(previous && current && previous !== current)) {
+              // No change in response - no need to refresh the UI
+              return;
+            }
+            console.log("Change detected - rerender the lists");
+            // Continue with the flow
+            previous = current;
+            $("#loader").hide("slow", function () {
+              $target.remove();
+            });
+            $("#createListBtn").html("Create List");
             $("#lists-wrapper").empty();
             var lists = data;
-            if (lists.length == 0){
-              $("#loader").html('<div class="alert alert-warning" role="alert">It seems a bit lonely here! Create a list to continue</div>');
+            if (lists.length == 0) {
+              $("#loader").html(
+                '<div class="alert alert-warning" role="alert">It seems a bit lonely here! Create a list to continue</div>'
+              );
               $("#loader").show();
             }
             for (var i in lists) {
@@ -176,8 +131,7 @@
               var user = lists[i].user;
               var href = baseurl + `/list/${listid}`;
               var title = `<span class="title">${lists[i].title}</span>`;
-              var item = `        
-              
+              var item = `
               <a
                 style="display: block; text-decoration: none;"
                 class="shadow-sm p-2 mb-2 bg-white rounded"
@@ -196,30 +150,62 @@
                     </span>
                   </span>
                 </span>
-
-                <!-- 
-                <span class="btn-group" role="group" aria-label="Basic example" style="float:right">
-                <a      style="border:none" class="btn btn-sm btn-outline-info" href=${href}>View</a>
-                <button style="border:none" class="btn btn-sm btn-outline-warning edit">Edit</button>
-                <button style="border:none" class="btn btn-sm btn-outline-danger delete">Delete</button>                    
-                </span>
-                -->
               </a>`;
               wrapper.innerHTML += item;
             }
-            if (listsSnapshot.length > lists.length) {
-              for (var i = lists.length; i < listsSnapshot.length; i++) {
-                $(`#data-row-${i}`).remove();
-              }
-            }
-            listSnapshot = lists;
           });
+        //
+      }
+
+      function addNewList() {
+        console.log("Adding new list..");
+        if ($.trim($("#title").val()) == "") {
+          alert("List name can not be left blank");
+          return false;
         }
+        $("#createListBtn").html(
+          'Creating list <div class="spinner-border spinner-border-sm"></div>'
+        );
+        var url = baseurl + "/api/list-create/";
+        if (activeItem != null) {
+          var url = baseurl + `/api/list-update/${activeItem.id}`;
+          activeItem = null;
+        }
+        var title = $("#title").val();
+        var user = $("#logged_in_userid").text();
 
-        
+        console.log(`URL used: [${url}]`);
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+          body: JSON.stringify({ title: title, users: [user] }),
+        }).then(function (response) {
+          console.log("Adding new list..Done");
+          buildLists();
+          document.getElementById("form").reset();
+        });
+      }
+    </script>
 
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $("#form-wrapper").submit(function (e) {
+          e.preventDefault();
+          addNewList(e);
+        });
+
+        getUserId();
+        // Setting previous and current to different values to force initial refresh
+        previous = "x";
+        current = "y";
+        buildLists();
+        setInterval("buildLists()", 5000);
       });
     </script>
+
     <script
       src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
       integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -238,3 +224,10 @@
     {% endif %}
   </body>
 </html>
+
+<!--
+function editItem(item) {
+          activeItem = item;
+          document.getElementById("title").value = activeItem.title;
+        }
+-->

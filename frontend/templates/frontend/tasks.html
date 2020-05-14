@@ -25,7 +25,11 @@
                         placeholder="Add a task"
                       />
                       <div class="input-group-append">
-                        <button id="addTaskBtn" class="btn btn-secondary" type="submit">
+                        <button
+                          id="addTaskBtn"
+                          class="btn btn-secondary"
+                          type="submit"
+                        >
                           Add Task
                         </button>
                       </div>
@@ -41,148 +45,130 @@
     </div>
 
     <script type="text/javascript">
-      $(document).ready(function () {
-        var baseurl = window.location.origin;
-        var listid = $("#listid").text();
-        var listtitle = $("#listtitle").text();
-        var loggedInUsername = $("#logged_in_username").text();
-        var csrftoken = getCookie("csrftoken");
-        var activeItem = null;
-        var tasks_snapshot = [];
+      var listid = $("#listid").text();
+      var baseurl = window.location.origin;
+      var listtitle = $("#listtitle").text();
+      var csrftoken = getCookie("csrftoken");
+      var activeItem = null;
+      var tasks_snapshot = [];
+      var loggedInUsername = $("#logged_in_username").text();
 
-        $('#back').attr('href', baseurl);
-        getUserId();
-        buildTasks();
+      var previous = null;
+      var current = null;
 
-        var form = document.getElementById("form-wrapper");
-        form.addEventListener("submit", function (e) {
-          e.preventDefault();
-          console.log("Adding task..");
-          var inp = $("#title").val();
-          if(jQuery.trim(inp).length == 0){
-            //do something
-            alert("Task can't be empty!");
-            return false;
-          }
-          $("#addTaskBtn").html('Adding Task <div class="spinner-border spinner-border-sm"></div>')
-          var url = baseurl + "/api/task-create/";
-          if (activeItem != null) {
-            var url = baseurl + `/api/task-update/${activeItem.id}`;
-            activeItem = null;
-          }
+      $("#back").attr("href", baseurl);
 
-          var title = document.getElementById("title").value;
-          fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-              "X-CSRFToken": csrftoken,
-            },
-            body: JSON.stringify({ title: title, _list: listid }),
-          }).then(function (response) {
-            console.log("Adding task..Done");
-            buildTasks();
-            document.getElementById("form").reset();
+      function getUserId() {
+        var url = baseurl + "/api/get-user-id/" + loggedInUsername;
+        console.log(`Fetching userid for username [${loggedInUsername}].. `);
+        fetch(url)
+          .then((resp) => resp.json())
+          .then(function (data) {
+            console.log(
+              `Fetching userid for username [${loggedInUsername}]..Done `
+            );
+            console.log(`UserID = [${data.id}]`);
+            $("#logged_in_userid").text(data.id);
           });
-        });
+      }
 
-        function editItem(item) {
-          console.log("Item clicked:", item);
-          activeItem = item;
-          document.getElementById("title").value = activeItem.title;
-        }
-
-        function deleteItem(item) {
-          console.log(`Deleting item with id[${item.id}]`);
-          $("#task-delete-loader-"+ item.id).html('Deleting <div class="spinner-border spinner-border-sm"></div>')
-          fetch(baseurl + `/api/task-delete/${item.id}`, {
-            method: "DELETE",
-            headers: {
-              "Content-type": "application/json",
-              "X-CSRFToken": csrftoken,
-            },
-          }).then((response) => {
-            buildTasks();
-          });
-        }
-
-        function strikeUnstrike(item) {
-          url = baseurl + `/api/task-update/${item.id}`;
-          var listid = $("#listid").text();
-          console.log("Toglling complete status..");
-          console.log(`URL used [${url}]`);
-          $("#task-loader-"+item.id).removeClass("d-none");
-          item.completed = !item.completed;
-          fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-              "X-CSRFToken": csrftoken,
-            },
-            body: JSON.stringify({
-              title: item.title,
-              completed: item.completed,
-              _list: $("#listid").text()
-            }),
-          }).then((response) => {
-            console.log("Toglling complete status..Done");
-            console.log("Rebuilding tasks")
-            buildTasks();
-          });
-        }
-
-        function getCookie(name) {
-          var cookieValue = null;
-          if (document.cookie && document.cookie !== "") {
-            var cookies = document.cookie.split(";");
-            for (var i = 0; i < cookies.length; i++) {
-              var cookie = cookies[i].trim();
-              // Does this cookie string begin with the name we want?
-              if (cookie.substring(0, name.length + 1) === name + "=") {
-                cookieValue = decodeURIComponent(
-                  cookie.substring(name.length + 1)
-                );
-                break;
-              }
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          var cookies = document.cookie.split(";");
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1)
+              );
+              break;
             }
           }
-          return cookieValue;
         }
+        return cookieValue;
+      }
 
-        function getUserId() {
-          var url = baseurl + "/api/get-user-id/" + loggedInUsername;
-          console.log(`Fetching userid for username [${loggedInUsername}].. `);
-          fetch(url)
-            .then((resp) => resp.json())
-            .then(function (data) {
-              console.log(
-                `Fetching userid for username [${loggedInUsername}]..Done `
-              );
-              console.log(`UserID = [${data.id}]`);
-              $("#logged_in_userid").text(data.id);
+      function editItem(item) {
+        console.log("Item clicked:", item);
+        activeItem = item;
+        document.getElementById("title").value = activeItem.title;
+      }
+
+      function deleteItem(item) {
+        console.log(`Deleting item with id[${item.id}]`);
+        $("#task-delete-loader-" + item.id).html(
+          'Deleting <div class="spinner-border spinner-border-sm"></div>'
+        );
+        fetch(baseurl + `/api/task-delete/${item.id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+        }).then((response) => {
+          buildTasks();
+        });
+      }
+
+      function strikeUnstrike(item) {
+        url = baseurl + `/api/task-update/${item.id}`;
+        var listid = $("#listid").text();
+        console.log("Toglling complete status..");
+        console.log(`URL used [${url}]`);
+        $("#task-loader-" + item.id).removeClass("d-none");
+        item.completed = !item.completed;
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+          body: JSON.stringify({
+            title: item.title,
+            completed: item.completed,
+            _list: $("#listid").text(),
+          }),
+        }).then((response) => {
+          console.log("Toglling complete status..Done");
+          console.log("Rebuilding tasks");
+          buildTasks();
+        });
+      }
+
+      function buildTasks() {
+        var url = baseurl + `/api/tasks/${listid}`;
+        var wrapper = document.getElementById("tasks-wrapper");
+        fetch(url)
+          .then((resp) => resp.json())
+          .then(function (data) {
+            // Refresh the page only if there is a change in the response
+            // that is - if the tasks is/are modified
+            // current and previous variables keep track of the values
+            current = JSON.stringify(data);
+            if (!(previous && current && previous !== current)) {
+              // No change in response - no need to refresh the UI
+              return;
+            }
+            console.log("Change detected - rerender the tasks");
+            // Continue with the flow
+            previous = current;
+            $("#loader").hide("slow", function () {
+              $target.remove();
             });
-        }
+            $("#addTaskBtn").html("Add Task");
+            // console.log(`Fetching tasks/s using [${url}]..Done`);
+            $("#tasks-wrapper").empty();
+            var tasks = data;
 
-        function buildTasks() {
-          var url = baseurl + `/api/tasks/${listid}`;
-          var wrapper = document.getElementById("tasks-wrapper");
-          console.log(`Fetching tasks/s using [${url}]..`);
-          fetch(url)
-            .then((resp) => resp.json())
-            .then(function (data) {
-              $("#loader").hide('slow', function(){ $target.remove(); });
-              $("#addTaskBtn").html('Add Task')
-              console.log(`Fetching tasks/s using [${url}]..Done`);
-              $("#tasks-wrapper").empty();
-              var tasks = data;
-
-              for (var i in tasks) {
-                var item;
-                var taskid = tasks[i].id;
-                var completed = tasks[i].completed;
-                var title = `<span class="title">${tasks[i].title}</span>`;
-                if (tasks[i].completed == true) {
-                  item = `
+            for (var i in tasks) {
+              var item;
+              var taskid = tasks[i].id;
+              var completed = tasks[i].completed;
+              var title = `<span class="title">${tasks[i].title}</span>`;
+              if (tasks[i].completed == true) {
+                item = `
                   <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded">
                     <span id="data-row-${i}" class="task-wrapper">
                       <input type="checkbox"  class="cb" checked="checked">
@@ -197,8 +183,8 @@
                       </span>
                     </span>
                   </div>`;
-                } else {
-                  item = `
+              } else {
+                item = `
                   <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded">
                     <span id="data-row-${i}" class="task-wrapper">
                       <input type="checkbox" class="cb">
@@ -213,57 +199,90 @@
                       </span>
                     </span>
                   </div>`;
-                }
-                wrapper.innerHTML += item;
               }
-              /*
+              wrapper.innerHTML += item;
+            }
+            /*
               if (tasks_snapshot.length > tasks.length) {
                 for (var i = tasks.length; i < tasks_snapshot.length; i++) {
                   document.getElementById(`data-row-${i}`).remove();
                 }
               }
               */
-              tasks_snapshot = tasks;
-              for (var i in tasks) {
-                var deleteBtn = document.getElementsByClassName("delete")[i];
-                var title = document.getElementsByClassName("title")[i];
-                var checkbox = document.getElementsByClassName("cb")[i];
-                deleteBtn.addEventListener(
-                  "click",
-                  (function (item) {
-                    return function () {
-                      deleteItem(item);
-                    };
-                  })(tasks[i])
-                );
+            tasks_snapshot = tasks;
+            for (var i in tasks) {
+              var deleteBtn = document.getElementsByClassName("delete")[i];
+              var title = document.getElementsByClassName("title")[i];
+              var checkbox = document.getElementsByClassName("cb")[i];
+              deleteBtn.addEventListener(
+                "click",
+                (function (item) {
+                  return function () {
+                    deleteItem(item);
+                  };
+                })(tasks[i])
+              );
 
-                title.addEventListener(
-                  "click",
-                  (function (item) {
-                    return function () {
-                      editItem(item);
-                    };
-                  })(tasks[i])
-                );
+              title.addEventListener(
+                "click",
+                (function (item) {
+                  return function () {
+                    editItem(item);
+                  };
+                })(tasks[i])
+              );
 
-                checkbox.addEventListener(
-                  "change",
-                  (function (item) {
-                    return function () {
-                      strikeUnstrike(item);
-                    };
-                  })(tasks[i])
-                );
-              }
-            });
+              checkbox.addEventListener(
+                "change",
+                (function (item) {
+                  return function () {
+                    strikeUnstrike(item);
+                  };
+                })(tasks[i])
+              );
+            }
+          });
+      }
+
+      function addTask() {
+        console.log("Adding task..");
+        var inp = $("#title").val();
+        if (jQuery.trim(inp).length == 0) {
+          //do something
+          alert("Task can't be empty!");
+          return false;
+        }
+        $("#addTaskBtn").html(
+          'Adding Task <div class="spinner-border spinner-border-sm"></div>'
+        );
+        var url = baseurl + "/api/task-create/";
+        if (activeItem != null) {
+          var url = baseurl + `/api/task-update/${activeItem.id}`;
+          activeItem = null;
         }
 
-        function deleteList(listid) {
-          
-          console.log(listid);
-          /*
-          console.log(`Deleting list with listid = [${item.id}]..`);
-          var url = baseurl + `/api/list-delete/${item.id}`;
+        var title = document.getElementById("title").value;
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+          body: JSON.stringify({ title: title, _list: listid }),
+        }).then(function (response) {
+          console.log("Adding task..Done");
+          buildTasks();
+          document.getElementById("form").reset();
+        });
+      }
+
+      function deleteTask() {
+        if (confirm(`Are you sure to delete list [${listtitle}]?`)) {
+          $("#loader-text").text(`Deleting list [${listtitle}]`);
+          $("#loader").show();
+
+          console.log(`Deleting list[${listtitle}] with listid=[${listid}]..`);
+          var url = baseurl + `/api/list-delete/${listid}`;
           fetch(url, {
             method: "DELETE",
             headers: {
@@ -271,31 +290,34 @@
               "X-CSRFToken": csrftoken,
             },
           }).then((response) => {
-            console.log(`Deleting list with listid = [${item.id}]..Done`);
-            buildLists();
-          }); */
+            console.log(
+              `Deleting list[${listtitle}] with listid=[${listid}]..Done`
+            );
+            //buildLists();
+            window.location.href = baseurl;
+          });
         }
-        $("#deletelist").click(function(){
-          if (confirm(`Are you sure to delete list [${listtitle}]?`)) {
-            $("#loader-text").text(`Deleting list [${listtitle}]`);
-            $("#loader").show();
-            
-            console.log(`Deleting list[${listtitle}] with listid=[${listid}]..`);
-            var url = baseurl + `/api/list-delete/${listid}`;
-            fetch(url, {
-              method: "DELETE",
-              headers: {
-                "Content-type": "application/json",
-                "X-CSRFToken": csrftoken,
-              },
-            }).then((response) => {
-              console.log(`Deleting list[${listtitle}] with listid=[${listid}]..Done`);
-              //buildLists();
-              window.location.href = baseurl;
-            });
-          }
-          return false;
+        return false;
+      }
+    </script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $("#form-wrapper").submit(function (e) {
+          e.preventDefault();
+          addTask();
         });
+
+        $("#deletelist").click(function () {
+          deleteTask();
+        });
+
+        getUserId();
+
+        // Setting previous and current to different values to force initial tasks refresh
+        previous = "x";
+        current = "y";
+        buildTasks();
+        setInterval("buildTasks()", 5000);
       });
     </script>
     <script
