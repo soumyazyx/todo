@@ -49,21 +49,12 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     # PROVIDERS
     "allauth.socialaccount.providers.google",
-    "allauth.socialaccount.providers.facebook",
 ]
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": ["profile", "email",],
         "AUTH_PARAMS": {"access_type": "online",},
-    },
-    "facebook": {
-        "SCOPE": ["email",],
-        "AUTH_PARAMS": {"auth_type": "reauthenticate"},
-        "METHOD": "oauth2",
-        "VERIFIED_EMAIL": False,
-        "EXCHANGE_TOKEN": True,
-        "LOCALE_FUNC": lambda request: "kr_KR",
-    },
+    }
 }
 
 MIDDLEWARE = [
@@ -95,11 +86,6 @@ TEMPLATES = [
         },
     }
 ]
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = True
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
