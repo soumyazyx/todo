@@ -15,8 +15,6 @@ def tasksIntermediate(request, listid):
 
 @login_required
 def tasks(request):
-    print(request.session.get("selected_list_id"))
-    print(request.session.get("selected_list_title"))
     context = {
         "listid": request.session.get("selected_list_id"),
         "listtitle": request.session.get("selected_list_title"),
