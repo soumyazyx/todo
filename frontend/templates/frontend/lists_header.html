@@ -62,6 +62,7 @@
   {% load socialaccount %}
 <p><a href="{% provider_login_url "facebook" process="connect" %}">Connect a facebook account</a></p>
 <p><a href="{% provider_login_url "google" process="connect" %}">Connect a Google account</a></p>
+<a href="{% provider_login_url "facebook" method="js_sdk" %}">Login Button image</a>
   <a
     class="text-dark text-left"
     role="button"

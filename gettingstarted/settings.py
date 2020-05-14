@@ -60,7 +60,9 @@ SOCIALACCOUNT_PROVIDERS = {
         "SCOPE": ["email",],
         "AUTH_PARAMS": {"auth_type": "reauthenticate"},
         "METHOD": "oauth2",
-        "LOCALE_FUNC": lambda request: "pt_BR",
+        "VERIFIED_EMAIL": False,
+        "EXCHANGE_TOKEN": True,
+        "LOCALE_FUNC": lambda request: "kr_KR",
     },
 }
 
