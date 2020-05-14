@@ -42,13 +42,10 @@
   <span class="spinner-grow spinner-grow-sm"></span>
 </div>
 {% else %}
-<header class="header">
-  <nav class="navbar navbar-expand-sm navbar-light bg-light">
-    <span>
-      <i class="fas fa-user"></i>
-    </span>
-  </nav>
-</header>
+<script>
+  document.body.style.backgroundColor = "white";
+</script>
+
 <div
   class="card card-body text-center p-2"
   style="
@@ -59,9 +56,12 @@
     border: none;
   "
 >
-  <span class="text-info">Sign in to continue to todozyx</span>
+  <span class="text-dark text-left">Sign in</span>
+  <hr />
+  <button><a href="{% provider_login_url "facebook" method="oauth2" %}">Facebook Login</a></button>
+  <button><a href="{% provider_login_url "facebook" method="js_sdk" %}">Facebook Login</a></button>
   <a
-    class="btn btn-dark m-1"
+    class="text-dark text-left"
     role="button"
     style="text-transform: none;"
     id="google_login"
@@ -72,8 +72,9 @@
       style="margin-bottom: 3px; margin-right: 5px;"
       alt="Google sign-in"
       src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
-    />Sign in
+    />Google
   </a>
+  <hr />
 </div>
 
 {% endif %}

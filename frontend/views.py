@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 
 
 def lists(request):
@@ -12,6 +13,7 @@ def tasksIntermediate(request, listid):
     return redirect("/tasks")
 
 
+@login_required
 def tasks(request):
     print(request.session.get("selected_list_id"))
     print(request.session.get("selected_list_title"))

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     # PROVIDERS
     "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook",
 ]
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
@@ -147,6 +148,7 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/static/"
 SITE_ID = 1
+LOGIN_URL = "/"
 LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_ON_GET = True
 django_heroku.settings(locals())
