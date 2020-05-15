@@ -170,7 +170,7 @@
               var title = `<span class="title">${tasks[i].title}</span>`;
               if (tasks[i].completed == true) {
                 item = `
-                  <div style="display:block;" class="shadow-shaddlebrown p-2 mb-2 bg-white rounded">
+                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded">
                     <span id="data-row-${i}" class="task-wrapper">
                       <input type="checkbox"  class="cb" checked="checked">
                       <span class="text-saddlebrown"><del>${title}</del></span>
@@ -186,7 +186,7 @@
                   </div>`;
               } else {
                 item = `
-                  <div style="display:block;" class="shadow-shaddlebrown p-2 mb-2 bg-white rounded">
+                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded">
                     <span id="data-row-${i}" class="task-wrapper">
                       <input type="checkbox" class="cb">
                       <span class="text-saddlebrown">${title}</span>
