@@ -19,8 +19,8 @@
                       name="title"
                       type="text"
                       class="form-control"
-                      style="border: 1px solid #ccc;"
-                      placeholder="New list name"
+                      style="border: 1px solid #ccc; color: red"
+                      placeholder="List Name"
                     />
                     <div class="input-group-append">
                       <button
@@ -140,8 +140,8 @@
                 onclick="showLoader(${listid}); return true;"
               >
                 <span id="data-row-${i}" class="task-wrapper">
-                  <span class="text-muted"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
-                  <span class="text-muted">
+                  <span class="text-dark"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
+                  <span class="text-dark">
                     ${title}
                     <span class="d-none" id="list-loader-${listid}">
                       <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
@@ -202,7 +202,7 @@
         previous = "x";
         current = "y";
         buildLists();
-        setInterval("buildLists()", 5000);
+        setInterval("buildLists()", 60000);
       });
     </script>
 

@@ -1,22 +1,13 @@
-{% load socialaccount %} 
-{% if user.is_authenticated %}
+{% load socialaccount %} {% if user.is_authenticated %}
 <header class="header">
-  <nav
-    class="navbar navbar-expand-sm"
-    style="background: white; padding: 0.25rem;"
-  >
+  <nav class="navbar navbar-expand-sm bg-white">
     <span>
       <button
         class="dropdown-toggle"
         data-toggle="dropdown"
         style="background: none; border: none;"
       >
-        <img
-          width="35"
-          height="35"
-          style="border-radius: 70px;"
-          src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
-        />
+        <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" />
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu m-1 p-1 text-muted" style="font-size: normal;">
@@ -27,7 +18,8 @@
           <a
             id="logout"
             class="btn btn-light btn-sm text-warning btn-block"
-            href="/accounts/logout">
+            href="/accounts/logout"
+          >
             Logout
           </a>
         </li>
@@ -35,7 +27,7 @@
     </span>
   </nav>
 </header>
-<div id="loader" style="text-align: center;">
+<div id="loader">
   <br />
   Loading lists&nbsp;&nbsp;
   <span class="spinner-grow spinner-grow-sm"></span>
@@ -47,29 +39,18 @@
   document.body.style.backgroundColor = "white";
 </script>
 
-<div
-  class="card card-body text-center p-2"
-  style="
-    max-width: 400px;
-    margin: auto;
-    color: grey;
-    background: transparent;
-    border: none;
-  "
->
+<div id="login" class="card card-body text-center p-2">
   <span class="text-dark text-left">Sign in</span>
   <hr />
   {% load socialaccount %}
   <a
     class="text-dark text-left"
     role="button"
-    style="text-transform: none;"
     id="google_login"
     href="/accounts/google/login"
   >
     <img
-      width="20px"
-      style="margin-bottom: 3px; margin-right: 5px;"
+      class="social-icon"
       alt="Google sign-in"
       src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
     />Google
