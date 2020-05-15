@@ -1,19 +1,19 @@
 {% load socialaccount %}
 
 <header class="header">
-  <nav class="navbar navbar-expand-sm bg-white">
+  <nav class="navbar navbar-expand-sm" style="background: #723e28">
     {% if user.is_authenticated %}
     <span>
-      <a id="back" href=""><i class="fas fa-arrow-left"></i></a>
+      <a id="back" href="" style="color: #00bfff"><i class="fas fa-arrow-left"></i></a>
       <button
-        class="dropdown-toggle"
+        class="dropdown-toggle text-white"
         data-toggle="dropdown"
         style="background: none; border: none;"
       >
         <span>&nbsp;&nbsp;{{listtitle}}</span>
         <span class="caret"></span>
       </button>
-      <ul class="dropdown-menu m-1 p-1 text-muted" style="font-size: normal;">
+      <ul class="dropdown-menu m-1 p-1 text-saddlebrown" style="font-size: normal;">
         <li>{{user.first_name}} {{user.last_name}}</li>
         <li>{{user.email}}</li>
         <div class="dropdown-divider"></div>
@@ -43,7 +43,7 @@
 
 <div id="loader" style="text-align: center;">
   <br />
-  <span id="loader-text">Loading tasks&nbsp;&nbsp;</span>
+  <span id="loader-text" class="text-saddlebrown">Loading tasks&nbsp;&nbsp;</span>
   <span class="spinner-grow spinner-grow-sm"></span>
   <span class="spinner-grow spinner-grow-sm"></span>
   <span class="spinner-grow spinner-grow-sm"></span>

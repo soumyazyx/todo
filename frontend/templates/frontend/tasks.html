@@ -6,32 +6,6 @@
   <body>
     {% include 'frontend/tasks_header.html' %}
 
-
-<ul class="list">
-  <li class="list-item">
-    <input type="checkbox" class="hidden-box" id="first" checked/>
-    <label for="first" class="check--label">
-      <span class="check--label-box"></span>
-      <span class="check--label-text">First Checkbox</span>
-    </label>
-  </li>
-  <li class="list-item">
-    <input type="checkbox" class="hidden-box" id="second" />
-    <label for="second" class="check--label">
-      <span class="check--label-box"></span>
-      <span class="check--label-text">Second Checkbox</span>
-    </label>
-  </li>
-  <li class="list-item">
-    <input type="checkbox" class="hidden-box" id="third" />
-    <label for="third" class="check--label">
-      <span class="check--label-box"></span>
-      <span class="check--label-text">Third Checkbox</span>
-    </label>
-  </li>
-</ul>
-
-
     <div class="container">
       <div class="row">
         <div class="col-12">
@@ -46,14 +20,15 @@
                         id="title"
                         name="title"
                         type="text"
-                        class="form-control"
+                        class="form-control text-saddlebrown"
                         style="border: 1px solid #ccc;"
-                        placeholder="Add a task"
+                        placeholder="Task Name"
                       />
                       <div class="input-group-append">
                         <button
                           id="addTaskBtn"
-                          class="btn btn-secondary"
+                          class="btn"
+                          style="background: #723e28; color:white;"
                           type="submit"
                         >
                           Add Task
@@ -195,10 +170,10 @@
               var title = `<span class="title">${tasks[i].title}</span>`;
               if (tasks[i].completed == true) {
                 item = `
-                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded">
+                  <div style="display:block;" class="shadow-shaddlebrown p-2 mb-2 bg-white rounded">
                     <span id="data-row-${i}" class="task-wrapper">
                       <input type="checkbox"  class="cb" checked="checked">
-                      <span class="text-black"><del>${title}</del></span>
+                      <span class="text-saddlebrown"><del>${title}</del></span>
                       <span class="d-none" id="task-loader-${taskid}">
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
@@ -211,10 +186,10 @@
                   </div>`;
               } else {
                 item = `
-                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded">
+                  <div style="display:block;" class="shadow-shaddlebrown p-2 mb-2 bg-white rounded">
                     <span id="data-row-${i}" class="task-wrapper">
                       <input type="checkbox" class="cb">
-                      <span class="text-black">${title}</span>
+                      <span class="text-saddlebrown">${title}</span>
                       <span class="d-none" id="task-loader-${taskid}">
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>

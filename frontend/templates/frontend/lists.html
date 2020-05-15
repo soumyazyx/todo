@@ -19,13 +19,13 @@
                       name="title"
                       type="text"
                       class="form-control"
-                      style="border: 1px solid #ccc; color: red"
+                      style="background: white; color:#723e28;"
                       placeholder="List Name"
                     />
                     <div class="input-group-append">
                       <button
                         id="createListBtn"
-                        class="btn btn-secondary"
+                        class="btn" style="background: #723e28; color:white;"
                         type="submit"
                       >
                         Create List
@@ -140,8 +140,8 @@
                 onclick="showLoader(${listid}); return true;"
               >
                 <span id="data-row-${i}" class="task-wrapper">
-                  <span class="text-dark"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
-                  <span class="text-dark">
+                  <span class="text-saddlebrown"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
+                  <span class="text-saddlebrown">
                     ${title}
                     <span class="d-none" id="list-loader-${listid}">
                       <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
