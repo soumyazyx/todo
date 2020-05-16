@@ -39,20 +39,21 @@
               </div>
               <div id="tasks-wrapper">
                 <div id="pending-tasks"></div>
-                
+
                 <div class="text-center p-1">
-                <a id="show-completed-tasks"
-                class="btn btn-sm badge-shaddlebrown text-light d-none"
-                data-toggle="collapse"
-                href="#completed-tasks"
-                role="button"
-                aria-expanded="false"
-                aria-controls="completedTasks"
-              >
-                Show completed tasks
-              </a></div>
-            </p>
-            <div class="collapse" id="completed-tasks"></div>
+                  <a
+                    id="show-completed-tasks"
+                    class="btn btn-sm badge-shaddlebrown text-light d-none"
+                    data-toggle="collapse"
+                    href="#completed-tasks"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="completedTasks"
+                  >
+                    Show completed tasks
+                  </a>
+                </div>
+                <div class="collapse" id="completed-tasks"></div>
               </div>
             </div>
           </main>
@@ -165,8 +166,7 @@
       function buildTasks() {
         var url = baseurl + `/api/tasks/${listid}`;
         var wrapper = document.getElementById("tasks-wrapper");
-        var pendingWrapper = document.getElementById("pending-tasks");
-        var completedWrapper = document.getElementById("completed-tasks");
+
         fetch(url)
           .then((resp) => resp.json())
           .then(function (data) {
@@ -184,10 +184,11 @@
             $("#loader").hide("slow");
             $("#addTaskBtn").html("Add Task");
             // console.log(`Fetching tasks/s using [${url}]..Done`);
-            // $("#tasks-wrapper").empty();
             $("#pending-tasks").empty();
             $("#completed-tasks").empty();
             var tasks = data;
+            var completedTasksCount = 0;
+            var pendingTasksCount = 0;
 
             for (var i in tasks) {
               var item;
@@ -195,6 +196,7 @@
               var completed = tasks[i].completed;
               var title = `<span class="title">${tasks[i].title}</span>`;
               if (tasks[i].completed == true) {
+                completedTasksCount += 1;
                 completedItem = `
                   <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
                     <span id="data-row-${i}" class="task-wrapper">
@@ -210,8 +212,9 @@
                       </span>
                     </span>
                   </div>`;
-                completedWrapper.innerHTML += completedItem;
+                $("#completed-tasks").append(completedItem);
               } else {
+                pendingTasksCount += 1;
                 pendingItem = `
                   <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
                     <span id="data-row-${i}" class="task-wrapper">
@@ -227,18 +230,12 @@
                       </span>
                     </span>
                   </div>`;
-                pendingWrapper.innerHTML += pendingItem;
+                $("#pending-tasks").append(pendingItem);
               }
-              // wrapper.innerHTML += item;
             }
-            $("#show-completed-tasks").removeClass("d-none");
-            /*
-              if (tasks_snapshot.length > tasks.length) {
-                for (var i = tasks.length; i < tasks_snapshot.length; i++) {
-                  document.getElementById(`data-row-${i}`).remove();
-                }
-              }
-              */
+            if (completedTasksCount > 0) {
+              $("#show-completed-tasks").removeClass("d-none");
+            }
             tasks_snapshot = tasks;
             for (var i in tasks) {
               var deleteBtn = document.getElementsByClassName("delete")[i];
