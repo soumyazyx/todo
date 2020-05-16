@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 
 from .models import Task, List
 from .serializers import TaskSerializer, ListSerializer, UserSerialzer
@@ -11,6 +12,7 @@ User = get_user_model()
 
 
 @api_view(["GET"])
+@login_required
 def apiOverview(request):
     api_urls = {
         "Tasks": "/tasks/",
@@ -29,6 +31,7 @@ def apiOverview(request):
 
 
 @api_view(["GET"])
+@login_required
 def tasks(request, listid):
     tasks = Task.objects.filter(_list_id=listid).order_by("completed", "-id")
     serializer = TaskSerializer(tasks, many=True)
@@ -36,6 +39,7 @@ def tasks(request, listid):
 
 
 @api_view(["GET"])
+@login_required
 def taskDetail(request, pk):
     tasks = Task.objects.get(id=pk)
     serializer = TaskSerializer(tasks, many=False)
@@ -43,6 +47,7 @@ def taskDetail(request, pk):
 
 
 @api_view(["POST"])
+@login_required
 def taskCreate(request):
     serializer = TaskSerializer(data=request.data)
     if serializer.is_valid():
@@ -51,6 +56,7 @@ def taskCreate(request):
 
 
 @api_view(["POST"])
+@login_required
 def taskUpdate(request, pk):
     task = Task.objects.get(id=pk)
     serializer = TaskSerializer(instance=task, data=request.data)
@@ -63,6 +69,7 @@ def taskUpdate(request, pk):
 
 
 @api_view(["DELETE"])
+@login_required
 def taskDelete(request, pk):
     task = Task.objects.get(id=pk)
     task.delete()
@@ -70,6 +77,7 @@ def taskDelete(request, pk):
 
 
 @api_view(["GET"])
+@login_required
 def lists(request, username):
     # query = f"SELECT AL.ID, USER_ID AS USER, AL.TITLE AS LIST_TITLE, COUNT(TSK._LIST_ID) AS TASKS_COUNT FROM PUBLIC.AUTH_USER AU,PUBLIC.API_LIST AL,PUBLIC.API_TASK TSK WHERE AL.USER_ID = AU.ID AND AL.ID = TSK._LIST_ID AND AU.USERNAME = 'soumya_ranjan' GROUP BY AL.ID,TSK._LIST_ID"
     lists = List.objects.filter(users__username=username)
@@ -83,6 +91,7 @@ def lists(request, username):
 
 
 @api_view(["GET"])
+@login_required
 def listDetail(request, pk):
     _list = List.objects.get(id=pk)
     serializer = ListSerializer(_list, many=False)
@@ -90,6 +99,7 @@ def listDetail(request, pk):
 
 
 @api_view(["POST"])
+@login_required
 def listCreate(request):
     serializer = ListSerializer(data=request.data)
     if serializer.is_valid():
@@ -100,6 +110,7 @@ def listCreate(request):
 
 
 @api_view(["POST"])
+@login_required
 def listUpdate(request, pk):
     _list = List.objects.get(id=pk)
     serializer = ListSerializer(instance=_list, data=request.data)
@@ -109,6 +120,7 @@ def listUpdate(request, pk):
 
 
 @api_view(["DELETE"])
+@login_required
 def listDelete(request, pk):
     print(f"pk passed in = {pk}")
     _list = List.objects.get(id=pk)
@@ -117,6 +129,7 @@ def listDelete(request, pk):
 
 
 @api_view(["GET"])
+@login_required
 def getUserId(request, username):
     query = f"SELECT ID,USERNAME,EMAIL FROM PUBLIC.AUTH_USER AU WHERE AU.USERNAME = '{username}'"
     querySet = User.objects.raw(query)

@@ -179,7 +179,7 @@
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                       </span>
-                      <span id="task-delete-loader-${taskid}" class="text-danger" style="float: right">
+                      <span id="task-delete-loader-${taskid}" class="text-tomato" style="float: right">
                         <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
                       </span>
                     </span>
@@ -279,7 +279,7 @@
 
       function deleteTask() {
         if (confirm(`Are you sure to delete list [${listtitle}]?`)) {
-          $("#loader-text").text(`Deleting list [${listtitle}]`);
+          $("#loader-text").html(`Deleting list <span class="badge badge-shaddlebrown">${listtitle}</span>`);
           $("#loader").show();
 
           console.log(`Deleting list[${listtitle}] with listid=[${listid}]..`);

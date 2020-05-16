@@ -121,7 +121,7 @@
             var lists = data;
             if (lists.length == 0) {
               $("#loader").html(
-                '<div class="alert alert-warning" role="alert">It seems a bit lonely here! Create a list to continue</div>'
+                '<div class="alert alert-warning" role="alert">Seems a bit lonely here. No lists yet! </div>'
               );
               $("#loader").show();
             }
@@ -183,6 +183,7 @@
           },
           body: JSON.stringify({ title: title, users: [user] }),
         }).then(function (response) {
+          console.log(response);
           console.log("Adding new list..Done");
           buildLists();
           document.getElementById("form").reset();
