@@ -5,7 +5,6 @@
   {% include 'frontend/head.html' %}
   <body>
     {% include 'frontend/tasks_header.html' %}
-
     <div class="container">
       <div class="row">
         <div class="col-12">
@@ -20,14 +19,15 @@
                         id="title"
                         name="title"
                         type="text"
-                        class="form-control"
+                        class="form-control text-saddlebrown"
                         style="border: 1px solid #ccc;"
-                        placeholder="Add a task"
+                        placeholder="Task Name"
                       />
                       <div class="input-group-append">
                         <button
                           id="addTaskBtn"
-                          class="btn btn-secondary"
+                          class="btn"
+                          style="background: #723e28; color: white;"
                           type="submit"
                         >
                           Add Task
@@ -37,7 +37,24 @@
                   </div>
                 </form>
               </div>
-              <div id="tasks-wrapper"></div>
+              <div id="tasks-wrapper">
+                <div id="pending-tasks"></div>
+
+                <div class="text-center p-1">
+                  <a
+                    id="show-completed-tasks"
+                    class="btn btn-sm badge-shaddlebrown text-light d-none"
+                    data-toggle="collapse"
+                    href="#completed-tasks"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="completedTasks"
+                  >
+                    Show completed tasks
+                  </a>
+                </div>
+                <div class="collapse" id="completed-tasks"></div>
+              </div>
             </div>
           </main>
         </div>
@@ -91,9 +108,18 @@
       }
 
       function editItem(item) {
-        console.log("Item clicked:", item);
+        console.log(`Item clicked [${item.title}]`);
         activeItem = item;
         document.getElementById("title").value = activeItem.title;
+        $("#title").focus();
+        $("#form")
+          .addClass("animate__animated animate__shakeX")
+          .one(
+            "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+            function () {
+              $(this).removeClass("animate__animated animate__shakeX");
+            }
+          );
       }
 
       function deleteItem(item) {
@@ -140,6 +166,7 @@
       function buildTasks() {
         var url = baseurl + `/api/tasks/${listid}`;
         var wrapper = document.getElementById("tasks-wrapper");
+
         fetch(url)
           .then((resp) => resp.json())
           .then(function (data) {
@@ -154,13 +181,14 @@
             console.log("Change detected - rerender the tasks");
             // Continue with the flow
             previous = current;
-            $("#loader").hide("slow", function () {
-              $target.remove();
-            });
+            $("#loader").hide("slow");
             $("#addTaskBtn").html("Add Task");
             // console.log(`Fetching tasks/s using [${url}]..Done`);
-            $("#tasks-wrapper").empty();
+            $("#pending-tasks").empty();
+            $("#completed-tasks").empty();
             var tasks = data;
+            var completedTasksCount = 0;
+            var pendingTasksCount = 0;
 
             for (var i in tasks) {
               var item;
@@ -168,47 +196,46 @@
               var completed = tasks[i].completed;
               var title = `<span class="title">${tasks[i].title}</span>`;
               if (tasks[i].completed == true) {
-                item = `
-                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded">
+                completedTasksCount += 1;
+                completedItem = `
+                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
                     <span id="data-row-${i}" class="task-wrapper">
                       <input type="checkbox"  class="cb" checked="checked">
-                      <span class="text-muted"><del>${title}</del></span>
+                      <span class="text-dark"><del>${title}</del></span>
                       <span class="d-none" id="task-loader-${taskid}">
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                       </span>
-                      <span id="task-delete-loader-${taskid}" class="text-danger" style="float: right">
+                      <span id="task-delete-loader-${taskid}" class="text-tomato" style="float: right">
                         <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
                       </span>
                     </span>
                   </div>`;
+                $("#completed-tasks").append(completedItem);
               } else {
-                item = `
-                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded">
+                pendingTasksCount += 1;
+                pendingItem = `
+                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
                     <span id="data-row-${i}" class="task-wrapper">
                       <input type="checkbox" class="cb">
-                      <span class="text-muted">${title}</span>
+                      <span class="text-dark">${title}</span>
                       <span class="d-none" id="task-loader-${taskid}">
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                         <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                       </span>
-                      <span  id="task-delete-loader-${taskid}" class="text-danger" style="float: right">
+                      <span  id="task-delete-loader-${taskid}" class="text-tomato" style="float: right">
                         <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
                       </span>
                     </span>
                   </div>`;
+                $("#pending-tasks").append(pendingItem);
               }
-              wrapper.innerHTML += item;
             }
-            /*
-              if (tasks_snapshot.length > tasks.length) {
-                for (var i = tasks.length; i < tasks_snapshot.length; i++) {
-                  document.getElementById(`data-row-${i}`).remove();
-                }
-              }
-              */
+            if (completedTasksCount > 0) {
+              $("#show-completed-tasks").removeClass("d-none");
+            }
             tasks_snapshot = tasks;
             for (var i in tasks) {
               var deleteBtn = document.getElementsByClassName("delete")[i];
@@ -278,7 +305,9 @@
 
       function deleteTask() {
         if (confirm(`Are you sure to delete list [${listtitle}]?`)) {
-          $("#loader-text").text(`Deleting list [${listtitle}]`);
+          $("#loader-text").html(
+            `Deleting list <span class="badge badge-shaddlebrown">${listtitle}</span>`
+          );
           $("#loader").show();
 
           console.log(`Deleting list[${listtitle}] with listid=[${listid}]..`);
@@ -317,14 +346,9 @@
         previous = "x";
         current = "y";
         buildTasks();
-        setInterval("buildTasks()", 5000);
+        setInterval("buildTasks()", 60000);
       });
     </script>
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"
-    ></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
       integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"

@@ -95,6 +95,13 @@ AUTHENTICATION_BACKENDS = (
 
 WSGI_APPLICATION = "gettingstarted.wsgi.application"
 
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DJANGO_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication"
+    ),
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
@@ -139,10 +146,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATIC_URL = "/static/"
 SITE_ID = 1
 LOGIN_URL = "/"
+STATIC_URL = "/static/"
 LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_ON_GET = True
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+
 django_heroku.settings(locals())

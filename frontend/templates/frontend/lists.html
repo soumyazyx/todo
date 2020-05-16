@@ -5,6 +5,7 @@
   {% include 'frontend/head.html' %}
   <body>
     {% include 'frontend/lists_header.html' %} {% if user.is_authenticated %}
+    
     <div id="form-wrapper">
       <div class="container">
         <div class="row">
@@ -19,13 +20,13 @@
                       name="title"
                       type="text"
                       class="form-control"
-                      style="border: 1px solid #ccc;"
-                      placeholder="New list name"
+                      style="background: white; color:#723e28;"
+                      placeholder="List Name"
                     />
                     <div class="input-group-append">
                       <button
                         id="createListBtn"
-                        class="btn btn-secondary"
+                        class="btn" style="background: #723e28; color:white;"
                         type="submit"
                       >
                         Create List
@@ -113,15 +114,13 @@
             console.log("Change detected - rerender the lists");
             // Continue with the flow
             previous = current;
-            $("#loader").hide("slow", function () {
-              $target.remove();
-            });
+            $("#loader").hide("slow");
             $("#createListBtn").html("Create List");
             $("#lists-wrapper").empty();
             var lists = data;
             if (lists.length == 0) {
               $("#loader").html(
-                '<div class="alert alert-warning" role="alert">It seems a bit lonely here! Create a list to continue</div>'
+                '<div class="alert alert-warning" role="alert">Seems a bit lonely here. No lists yet! </div>'
               );
               $("#loader").show();
             }
@@ -134,14 +133,14 @@
               var item = `
               <a
                 style="display: block; text-decoration: none;"
-                class="shadow-sm p-2 mb-2 bg-white rounded"
+                class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp"
                 href="${href}"
                 id="${listid}"
                 onclick="showLoader(${listid}); return true;"
               >
                 <span id="data-row-${i}" class="task-wrapper">
-                  <span class="text-muted"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
-                  <span class="text-muted">
+                  <span class="text-dark"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
+                  <span class="text-dark">
                     ${title}
                     <span class="d-none" id="list-loader-${listid}">
                       <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
@@ -183,6 +182,7 @@
           },
           body: JSON.stringify({ title: title, users: [user] }),
         }).then(function (response) {
+          console.log(response);
           console.log("Adding new list..Done");
           buildLists();
           document.getElementById("form").reset();
@@ -202,15 +202,10 @@
         previous = "x";
         current = "y";
         buildLists();
-        setInterval("buildLists()", 5000);
+        setInterval("buildLists()", 60000);
       });
     </script>
 
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"
-    ></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
       integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
