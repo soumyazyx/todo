@@ -76,7 +76,7 @@
       $("#back").attr("href", baseurl);
 
       function getUserId() {
-        var url = baseurl + "/api/get-user-id/" + loggedInUsername;
+        var url = baseurl + "/api/get-user-id/username/" + loggedInUsername;
         console.log(`Fetching userid for username [${loggedInUsername}].. `);
         fetch(url)
           .then((resp) => resp.json())
@@ -181,7 +181,7 @@
             console.log("Change detected - rerender the tasks");
             // Continue with the flow
             previous = current;
-            $("#loader").hide("slow");
+            $("#loader").hide();
             $("#addTaskBtn").html("Add Task");
             // console.log(`Fetching tasks/s using [${url}]..Done`);
             $("#pending-tasks").empty();
@@ -303,7 +303,75 @@
         });
       }
 
-      function deleteTask() {
+      function deleteList() {
+        var baseurl = window.location.origin;
+        var listid = $("#listid").text();
+        var listtitle = $("#listtitle").text();
+        var url = baseurl + `/api/list-delete/${listid}`;
+
+        const swalWithBootstrapButtons = Swal.mixin({
+          customClass: {
+            confirmButton: "btn btn-shaddlebrown m-1",
+            cancelButton: "btn btn-secondary m-1",
+          },
+          buttonsStyling: false,
+        });
+
+        swalWithBootstrapButtons
+          .fire({
+            animation: true,
+            html: `Are you sure to delete <span class="text-info font-weight-bold">${listtitle}</span>`,
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+            showLoaderOnConfirm: true,
+            preConfirm: (deletelist) => {
+              return fetch(url, {
+                method: "DELETE",
+                headers: {
+                  "Content-type": "application/json",
+                  "X-CSRFToken": csrftoken,
+                },
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error(response.statusText);
+                  }
+                  return response.json();
+                })
+                .catch((error) => {
+                  Swal.showValidationMessage(`Request failed: ${error}`);
+                });
+            },
+            allowOutsideClick: () => !Swal.isLoading(),
+          })
+          .then((result) => {
+            console.log(result);
+            if (result.value) {
+              // Swal.fire({
+              //   animation: false,
+              //   title: `${result.value.user_name}'s avatar`,
+              // });
+              const Toast = Swal.mixin({
+                toast: true,
+                position: "center",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                // onOpen: (toast) => {
+                //   toast.addEventListener("mouseenter", Swal.stopTimer);
+                //   toast.addEventListener("mouseleave", Swal.resumeTimer);
+                // },
+              });
+
+              Toast.fire({
+                icon: "success",
+                title: "List deleted. Redirecting to home page..",
+              }).then(function () {
+                window.location.replace(baseurl);
+              });
+            }
+          });
+        /*
         if (confirm(`Are you sure to delete list [${listtitle}]?`)) {
           $("#loader-text").html(
             `Deleting list <span class="badge badge-shaddlebrown">${listtitle}</span>`
@@ -327,6 +395,7 @@
           });
         }
         return false;
+        */
       }
     </script>
     <script type="text/javascript">
@@ -335,11 +404,6 @@
           e.preventDefault();
           addTask();
         });
-
-        $("#deletelist").click(function () {
-          deleteTask();
-        });
-
         getUserId();
 
         // Setting previous and current to different values to force initial tasks refresh

@@ -130,7 +130,21 @@ def listDelete(request, pk):
 
 @api_view(["GET"])
 @login_required
-def getUserId(request, username):
+def listShare(request, list_id, user_id):
+    print(f"{list_id}|{user_id}")
+    # Check if the record already exists
+    if List.users.through.objects.filter(list_id=list_id, user_id=user_id).count() > 0:
+        # Record already exist - its not an error
+        return Response("List already shared!")
+    else:
+        # Insert record
+        List.users.through.objects.create(list_id=list_id, user_id=user_id)
+        return Response("List successfully shared!")
+
+
+@api_view(["GET"])
+@login_required
+def getUserIdFromUsername(request, username):
     query = f"SELECT ID,USERNAME,EMAIL FROM PUBLIC.AUTH_USER AU WHERE AU.USERNAME = '{username}'"
     querySet = User.objects.raw(query)
     for rec in querySet:
@@ -140,7 +154,7 @@ def getUserId(request, username):
 
 
 @api_view(["GET"])
-def getUserFromEmail(request, email):
+def getUserIdFromEmail(request, email):
     user = User.objects.filter(email=email)
     if user.count() == 0:
         return JsonResponse({"user_id": -1})

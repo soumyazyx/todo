@@ -5,7 +5,7 @@
   {% include 'frontend/head.html' %}
   <body>
     {% include 'frontend/lists_header.html' %} {% if user.is_authenticated %}
-    
+
     <div id="form-wrapper">
       <div class="container">
         <div class="row">
@@ -20,13 +20,14 @@
                       name="title"
                       type="text"
                       class="form-control"
-                      style="background: white; color:#723e28;"
+                      style="background: white; color: #723e28;"
                       placeholder="List Name"
                     />
                     <div class="input-group-append">
                       <button
                         id="createListBtn"
-                        class="btn" style="background: #723e28; color:white;"
+                        class="btn"
+                        style="background: #723e28; color: white;"
                         type="submit"
                       >
                         Create List
@@ -42,7 +43,7 @@
         <div class="row">
           <div class="col-12">
             <main>
-              <div id="lists-wrapper"></div>
+              <div id="lists-wrapper" class="continer-fluid"></div>
             </main>
           </div>
         </div>
@@ -84,7 +85,7 @@
       }
 
       function getUserId() {
-        var url = `${baseurl}/api/get-user-id/${loggedInUsername}`;
+        var url = `${baseurl}/api/get-user-id/username/${loggedInUsername}`;
         console.log(`Fetching userid for username [${loggedInUsername}].. `);
         fetch(url)
           .then((resp) => resp.json())
@@ -114,7 +115,7 @@
             console.log("Change detected - rerender the lists");
             // Continue with the flow
             previous = current;
-            $("#loader").hide("slow");
+            $("#loader").hide("");
             $("#createListBtn").html("Create List");
             $("#lists-wrapper").empty();
             var lists = data;
@@ -131,13 +132,13 @@
               var href = baseurl + `/list/${listid}`;
               var title = `<span class="title">${lists[i].title}</span>`;
               var item = `
-              <a
-                style="display: block; text-decoration: none;"
-                class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp"
-                href="${href}"
-                id="${listid}"
-                onclick="showLoader(${listid}); return true;"
-              >
+                <a
+                  style=" text-decoration: none; display:block;"
+                  class="col-12 shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp"
+                  href="${href}"
+                  id="${listid}"
+                  onclick="showLoader(${listid}); return true;"
+                >
                 <span id="data-row-${i}" class="task-wrapper">
                   <span class="text-dark"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
                   <span class="text-dark">
@@ -182,7 +183,6 @@
           },
           body: JSON.stringify({ title: title, users: [user] }),
         }).then(function (response) {
-          console.log(response);
           console.log("Adding new list..Done");
           buildLists();
           document.getElementById("form").reset();
