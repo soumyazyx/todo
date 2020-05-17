@@ -157,7 +157,7 @@ def getUserIdFromUsername(request, username):
 def getUserIdFromEmail(request, email):
     user = User.objects.filter(email=email)
     if user.count() == 0:
-        return JsonResponse({"user_id": -1})
+        return JsonResponse({"user_id": -1, "email_id": email})
 
     for rec in user:
         user_id = rec.id
@@ -167,6 +167,7 @@ def getUserIdFromEmail(request, email):
         date_joined = rec.date_joined
     return JsonResponse(
         {
+            "email_id": email,
             "user_id": user_id,
             "user_name": user_name,
             "first_name": first_name,

@@ -198,38 +198,38 @@
               if (tasks[i].completed == true) {
                 completedTasksCount += 1;
                 completedItem = `
-                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
-                    <span id="data-row-${i}" class="task-wrapper">
-                      <input type="checkbox"  class="cb" checked="checked">
-                      <span class="text-dark"><del>${title}</del></span>
-                      <span class="d-none" id="task-loader-${taskid}">
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                      </span>
-                      <span id="task-delete-loader-${taskid}" class="text-tomato" style="float: right">
-                        <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
-                      </span>
-                    </span>
-                  </div>`;
+                        <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
+                          <span id="data-row-${i}" class="task-wrapper">
+                            <input type="checkbox"  class="cb" checked="checked">
+                            <span class="text-dark"><del>${title}</del></span>
+                            <span class="d-none" id="task-loader-${taskid}">
+                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                            </span>
+                            <span id="task-delete-loader-${taskid}" class="text-tomato" style="float: right">
+                              <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
+                            </span>
+                          </span>
+                        </div>`;
                 $("#completed-tasks").append(completedItem);
               } else {
                 pendingTasksCount += 1;
                 pendingItem = `
-                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
-                    <span id="data-row-${i}" class="task-wrapper">
-                      <input type="checkbox" class="cb">
-                      <span class="text-dark">${title}</span>
-                      <span class="d-none" id="task-loader-${taskid}">
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                      </span>
-                      <span  id="task-delete-loader-${taskid}" class="text-tomato" style="float: right">
-                        <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
-                      </span>
-                    </span>
-                  </div>`;
+                        <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
+                          <span id="data-row-${i}" class="task-wrapper">
+                            <input type="checkbox" class="cb">
+                            <span class="text-dark">${title}</span>
+                            <span class="d-none" id="task-loader-${taskid}">
+                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                            </span>
+                            <span  id="task-delete-loader-${taskid}" class="text-tomato" style="float: right">
+                              <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
+                            </span>
+                          </span>
+                        </div>`;
                 $("#pending-tasks").append(pendingItem);
               }
             }
@@ -319,7 +319,7 @@
 
         swalWithBootstrapButtons
           .fire({
-            animation: true,
+            animation: false,
             html: `Are you sure to delete <span class="text-info font-weight-bold">${listtitle}</span>`,
             showCancelButton: true,
             confirmButtonText: "Yes, delete it!",
@@ -345,57 +345,103 @@
             allowOutsideClick: () => !Swal.isLoading(),
           })
           .then((result) => {
-            console.log(result);
             if (result.value) {
-              // Swal.fire({
-              //   animation: false,
-              //   title: `${result.value.user_name}'s avatar`,
-              // });
+              window.location.replace(baseurl);
+              /*
+                    const Toast = Swal.mixin({
+                      toast: true,
+                      position: "center",
+                      showConfirmButton: false,
+                      timer: 2000,
+                      timerProgressBar: true,
+                      // onOpen: (toast) => {
+                      //   toast.addEventListener("mouseenter", Swal.stopTimer);
+                      //   toast.addEventListener("mouseleave", Swal.resumeTimer);
+                      // },
+                    });
+                    Toast.fire({
+                      animation: false,
+                      icon: "success",
+                      title: "List deleted. Redirecting to home page..",
+                    }).then(function () {
+                      window.location.replace(baseurl);
+                    });
+                    */
+            }
+          });
+      }
+
+      function shareList() {
+        var listid = $("#listid").text();
+        var listtitle = $("#listtitle").text();
+        var baseurl = window.location.origin;
+        const swalWithBootstrapButtons = Swal.mixin({
+          customClass: {
+            confirmButton: "btn btn-sm btn-shaddlebrown m-1",
+            cancelButton: "btn btn-sm btn-secondary m-1",
+          },
+          buttonsStyling: false,
+        });
+
+        swalWithBootstrapButtons
+          .fire({
+            animation: false,
+            text: "Invite people",
+            input: "email",
+            inputPlaceholder: "name@gmail.com",
+            inputValue: "soumyazyx@gmail.com",
+            confirmButtonText: "Invite!",
+            showCancelButton: true,
+            showLoaderOnConfirm: true,
+            preConfirm: (mailid) => {
+              var url = `${baseurl}/api/get-user-id/email/${mailid}`;
+              console.log(mailid);
+              console.log(url);
+              return fetch(url, {
+                method: "GET",
+                headers: {
+                  "Content-type": "application/json",
+                  "X-CSRFToken": csrftoken,
+                },
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error(response.statusText);
+                  }
+                  return response.json();
+                })
+                .catch((error) => {
+                  Swal.showValidationMessage(`Request failed: ${error}`);
+                });
+            },
+            allowOutsideClick: () => !Swal.isLoading(),
+          })
+          .then((result) => {
+            console.log(result.value.email_id);
+            if (result.value.user_id == -1) {
               const Toast = Swal.mixin({
                 toast: true,
                 position: "center",
-                showConfirmButton: false,
-                timer: 2000,
+                showConfirmButton: true,
+                // timer: 3000,
                 timerProgressBar: true,
-                // onOpen: (toast) => {
-                //   toast.addEventListener("mouseenter", Swal.stopTimer);
-                //   toast.addEventListener("mouseleave", Swal.resumeTimer);
-                // },
+                onOpen: (toast) => {
+                  toast.addEventListener("mouseenter", Swal.stopTimer);
+                  toast.addEventListener("mouseleave", Swal.resumeTimer);
+                },
               });
 
               Toast.fire({
-                icon: "success",
-                title: "List deleted. Redirecting to home page..",
+                icon: "error",
+                html: `<b>${result.value.email_id}</b> not registered with todozyx<hr>Lists can only be shared with registered users!`,
               }).then(function () {
-                window.location.replace(baseurl);
+                shareList();
               });
+              // swal.fire("User not in todozyx");
+            } else {
+              swal.fire("yay");
             }
           });
-        /*
-        if (confirm(`Are you sure to delete list [${listtitle}]?`)) {
-          $("#loader-text").html(
-            `Deleting list <span class="badge badge-shaddlebrown">${listtitle}</span>`
-          );
-          $("#loader").show();
-
-          console.log(`Deleting list[${listtitle}] with listid=[${listid}]..`);
-          var url = baseurl + `/api/list-delete/${listid}`;
-          fetch(url, {
-            method: "DELETE",
-            headers: {
-              "Content-type": "application/json",
-              "X-CSRFToken": csrftoken,
-            },
-          }).then((response) => {
-            console.log(
-              `Deleting list[${listtitle}] with listid=[${listid}]..Done`
-            );
-            //buildLists();
-            window.location.href = baseurl;
-          });
-        }
-        return false;
-        */
       }
     </script>
     <script type="text/javascript">

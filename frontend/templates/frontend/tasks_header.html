@@ -6,17 +6,21 @@
     <span>
       <a id="back" href="" style="color: #00bfff"><i class="fas fa-arrow-left"></i></a>
       <button
-        class="dropdown-toggle text-white"
+        class="btn btn-secondary rounded ml-2 dropdown-toggle"
         data-toggle="dropdown"
-        style="background: none; border: none;"
       >
         <span>&nbsp;&nbsp;{{listtitle}}</span>
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu m-1 p-1" style="font-size: normal;">
+        <!-- 
         <li>{{user.first_name}} {{user.last_name}}</li>
         <li>{{user.email}}</li>
         <div class="dropdown-divider"></div>
+        -->
+        <li class="nav-item mb-1">
+          <a class="btn btn-block btn-light" id="sharelist1"  onclick="shareList()">Share list1</a>
+        </li>        
         <li class="nav-item mb-1">
           <a class="btn btn-block btn-light" id="sharelist" href="/share">Share list</a>
         </li>        

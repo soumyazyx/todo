@@ -183,8 +183,10 @@
           },
           body: JSON.stringify({ title: title, users: [user] }),
         }).then(function (response) {
+          console.log(response);
           console.log("Adding new list..Done");
           buildLists();
+          var href = baseurl + `/list/${listid}`;
           document.getElementById("form").reset();
         });
       }
