@@ -91,10 +91,11 @@
 
       function handleMissingUserInvite() {
         var email = $("#email-id").val();
+        var baseurl = window.location.origin;
         Swal.fire({
           icon: "warning",
-          title: `<span class="text-danger">${email}</span> &nbsp;not found`,
-          html: `Feel free to pinch <span class="text-danger">${email}</span>&nbsp; to register.<br/>Once done, you can attempt to share!`,
+          title: `<span><span class="text-danger">${email}</span> not found</span>`,
+          html: `<span>Feel free to pinch <span class="font-weight-bold">${email}</span> to register at <a href="${baseurl}">${baseurl}</a><br/><br/>Once registered, you can share the list!</span>`,
         });
       }
     </script>
