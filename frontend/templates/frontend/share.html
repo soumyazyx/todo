@@ -1,0 +1,114 @@
+{% load socialaccount %} {% providers_media_js %} {% load static %}
+
+<!DOCTYPE html>
+<html>
+  {% include 'frontend/head.html' %}
+  <body>
+    {% include 'frontend/share_header.html' %}
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <main>
+            <div id="task-container">
+              <div id="form-wrapper">
+                <br />
+                <form id="form">
+                  <div class="flex-wrapper">
+                    <div class="input-group mb-3">
+                      <input
+                        id="email-id"
+                        name="email-id"
+                        type="email"
+                        class="form-control text-shaddlebrown"
+                        style="border: 1px solid #ccc;"
+                        placeholder="name@gmail.com"
+                        value="name@gmail.com"
+                      />
+                      <div class="input-group-append">
+                        <button
+                          id="invite"
+                          class="btn"
+                          style="background: #723e28; color: white;"
+                          type="submit"
+                        >
+                          Invite
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      function handleBlankInvite() {
+        alert("email id cant be left blank");
+        $("#title").focus();
+        $("#form")
+          .addClass("animate__animated animate__headShake")
+          .one(
+            "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+            function () {
+              $(this).removeClass("animate__animated animate__headShake");
+            }
+          );
+      }
+
+      function handleInvite() {
+        var baseurl = window.location.origin;
+        var email = $("#email-id").val();
+        $.ajax({
+          url: `${baseurl}/api/get-user/email/${email}`,
+          beforeSend: function (xhr) {
+            console.log(`Validating user for [${email}]..`);
+            $("#invite").html(
+              'Validating <div class="spinner-border spinner-border-sm"></div>'
+            );
+          },
+        })
+          .done(function (data) {
+            console.log(`Validating user for [${email}]..Done`);
+            console.log(data);
+            console.log(data.user_id);
+            if (data.user_id == -1) {
+              //User not registered on todozyx
+              handleMissingUserInvite();
+            }
+
+            $("#invite").html("Invite");
+          })
+          .fail(function () {
+            alert("Internal error occured");
+          })
+          .always(function () {
+            // alert("complete");
+          });
+      }
+
+      function handleMissingUserInvite() {
+        var email = $("#email-id").val();
+        Swal.fire({
+          icon: "warning",
+          title: `<span class="text-danger">${email}</span> &nbsp;not found`,
+          html: `Feel free to pinch <span class="text-danger">${email}</span>&nbsp; to register.<br/>Once done, you can attempt to share!`,
+        });
+      }
+    </script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $("#form-wrapper").submit(function (e) {
+          e.preventDefault();
+          if ($.trim($("#email-id").val()).length == 0) {
+            handleBlankInvite();
+          } else {
+            handleInvite();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

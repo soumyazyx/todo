@@ -137,3 +137,26 @@ def getUserId(request, username):
         username = rec.username
         userid = rec.id
     return JsonResponse({"username": username, "id": userid})
+
+
+@api_view(["GET"])
+def getUserFromEmail(request, email):
+    user = User.objects.filter(email=email)
+    if user.count() == 0:
+        return JsonResponse({"user_id": -1})
+
+    for rec in user:
+        user_id = rec.id
+        user_name = rec.username
+        first_name = rec.first_name
+        last_name = rec.last_name
+        date_joined = rec.date_joined
+    return JsonResponse(
+        {
+            "user_id": user_id,
+            "user_name": user_name,
+            "first_name": first_name,
+            "last_name": last_name,
+            "date_joined": date_joined,
+        }
+    )
