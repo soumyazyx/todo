@@ -80,7 +80,7 @@ def taskDelete(request, pk):
 @login_required
 def lists(request, username):
     # query = f"SELECT AL.ID, USER_ID AS USER, AL.TITLE AS LIST_TITLE, COUNT(TSK._LIST_ID) AS TASKS_COUNT FROM PUBLIC.AUTH_USER AU,PUBLIC.API_LIST AL,PUBLIC.API_TASK TSK WHERE AL.USER_ID = AU.ID AND AL.ID = TSK._LIST_ID AND AU.USERNAME = 'soumya_ranjan' GROUP BY AL.ID,TSK._LIST_ID"
-    lists = List.objects.filter(users__username=username)
+    lists = List.objects.filter(users__username=username).order_by("-id")
 
     request.session["lists"] = {}
     for lst in lists:

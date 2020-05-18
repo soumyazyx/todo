@@ -395,8 +395,6 @@
             showLoaderOnConfirm: true,
             preConfirm: (mailid) => {
               var url = `${baseurl}/api/get-user-id/email/${mailid}`;
-              console.log(mailid);
-              console.log(url);
               return fetch(url, {
                 method: "GET",
                 headers: {
@@ -417,7 +415,6 @@
             allowOutsideClick: () => !Swal.isLoading(),
           })
           .then((result) => {
-            console.log(result.value.email_id);
             if (result.value.user_id == -1) {
               const Toast = Swal.mixin({
                 toast: true,
@@ -439,7 +436,30 @@
               });
               // swal.fire("User not in todozyx");
             } else {
-              swal.fire("yay");
+              console.log(result.value.email_id);
+              var url = `${baseurl}/api/list-share/${listid}/${result.value.user_id}`;
+              console.log(url);
+              fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data == "List already shared!") {
+                    Swal.fire({
+                      icon: "success",
+                      html: `<span><span class="font-weight-bold text-info">${result.value.email_id}</span> is already subscribed to list <span class="font-weight-bold text-info">[${listtitle}]</span>`,
+                      confirmButtonColor: "#723e28",
+                    });
+                  } else if (data == "List successfully shared!") {
+                    Swal.fire({
+                      icon: "success",
+                      html: `List <span class="font-weight-bold text-info">${listtitle}</span> successfully shared with <span class="font-weight-bold text-info">${result.value.email_id}</span>`,
+                    });
+                  } else {
+                    Swal.fire({
+                      icon: "warning",
+                      title: `Invalid response recieved!`,
+                    });
+                  }
+                });
             }
           });
       }
