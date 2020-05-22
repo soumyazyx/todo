@@ -90,19 +90,13 @@
         fetch(url)
           .then((resp) => resp.json())
           .then(function (data) {
-            console.log(
-              `Fetching userid for username [${loggedInUsername}]..Done`
-            );
-            console.log(`UserID = [${data.id}]`);
             $("#logged_in_userid").text(data.id);
           });
-        //
       }
 
       function buildLists() {
         var url = baseurl + "/api/lists/" + loggedInUsername;
         var wrapper = document.getElementById("lists-wrapper");
-        // console.log(`Fetching list/s using [${url}]..`);
         fetch(url)
           .then((resp) => resp.json())
           .then(function (data) {
@@ -119,11 +113,15 @@
             $("#createListBtn").html("Create List");
             $("#lists-wrapper").empty();
             var lists = data;
+            console.log(data);
             if (lists.length == 0) {
-              $("#loader").html(
-                '<div class="alert alert-warning" role="alert">Seems a bit lonely here. No lists yet! </div>'
+              console.log("tiu1");
+              $("#message").html(
+                '<div class="alert alert-warning text-center" role="alert">Seems a bit lonely here. No lists yet! </div>'
               );
-              $("#loader").show();
+              $("#message").removeClass("d-none");
+            } else {
+              $("#message").addClass("d-none");
             }
             for (var i in lists) {
               var listid = lists[i].id;
