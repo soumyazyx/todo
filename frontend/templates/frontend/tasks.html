@@ -71,6 +71,13 @@
 
       $("#back").attr("href", baseurl);
 
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-shaddlebrown m-1",
+          cancelButton: "btn btn-secondary m-1",
+        },
+        buttonsStyling: false,
+      });
       function getUserId() {
         var url = baseurl + "/api/get-user-id/username/" + loggedInUsername;
         console.log(`Fetching userid for username [${loggedInUsername}].. `);
@@ -268,15 +275,16 @@
       }
 
       function addTask() {
-        console.log("Adding task..");
         var inp = $("#title").val();
         if (jQuery.trim(inp).length == 0) {
-          //do something
-          alert("Task can't be empty!");
+          swalWithBootstrapButtons.fire({
+            animation: false,
+            html: "Task can't be empty!",
+          });
           return false;
         }
         $("#addTaskBtn").html(
-          'Adding Task <div class="spinner-border spinner-border-sm"></div>'
+          'Creating Task <div class="spinner-border spinner-border-sm"></div>'
         );
         var url = baseurl + "/api/task-create/";
         if (activeItem != null) {
@@ -294,6 +302,10 @@
           body: JSON.stringify({ title: title, _list: listid }),
         }).then(function (response) {
           console.log("Adding task..Done");
+          $("#addTaskBtn").html(
+            'Adding Task <div class="spinner-border spinner-border-sm"></div>'
+          );
+
           buildTasks();
           document.getElementById("form").reset();
         });
@@ -371,14 +383,6 @@
         var listid = $("#listid").text();
         var listtitle = $("#listtitle").text();
         var baseurl = window.location.origin;
-        const swalWithBootstrapButtons = Swal.mixin({
-          customClass: {
-            confirmButton: "btn btn-shaddlebrown m-1",
-            cancelButton: "btn btn-secondary m-1",
-          },
-          buttonsStyling: false,
-        });
-
         swalWithBootstrapButtons
           .fire({
             animation: false,
