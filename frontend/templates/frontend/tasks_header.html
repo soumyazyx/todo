@@ -8,8 +8,8 @@
     </a>
     <span>
       <button
-        style="background: #85482f; border: #85482f; min-width: 150px;"
-        class="btn btn-secondary rounded dropdown-toggle"
+        id="lists-dropdown"
+        class="btn btn-secondary rounded dropdown-toggle "
         data-toggle="dropdown"
         data-disabled="true"
       >
@@ -28,9 +28,9 @@
         <li class="nav-item mb-1">
           <a
             class="btn btn-block text-white btn-shaddlebrown-faded"
-            id="sharelist1"
+            id="sharelist"
             onclick="shareList()"
-            >Share list <i class="fas fa-share-alt"></i>
+            >Share list <!-- <i class="fas fa-share-alt"></i> -->
           </a>
         </li>
         <li class="nav-item mb-1">
@@ -38,7 +38,7 @@
             class="btn btn-block text-white btn-shaddlebrown-faded"
             id="deletelist"
             onclick="deleteList()"
-            >Delete list <i class="fas fa-ban"></i>
+            >Delete list<!-- <i class="fas fa-ban"></i> -->
           </a>
         </li>
         <li class="nav-item">
@@ -46,7 +46,7 @@
             id="logout"
             class="btn btn-block text-white btn-shaddlebrown-faded"
             href="/accounts/logout"
-            >Logout <i class="fas fa-sign-out-alt"></i>
+            >Logout <!--<i class="fas fa-sign-out-alt"></i>-->
           </a>
         </li>
       </ul>
@@ -60,11 +60,8 @@
   </nav>
 </header>
 
-<div id="loader" style="text-align: center;">
-  <br />
-  <span id="loader-text" class="text-shaddlebrown"
-    >Loading tasks&nbsp;&nbsp;</span
-  >
+<div id="loader" class="alert alert-peru text-center" role="alert">
+  Loading tasks&nbsp;&nbsp;
   <span class="spinner-grow spinner-grow-sm"></span>
   <span class="spinner-grow spinner-grow-sm"></span>
   <span class="spinner-grow spinner-grow-sm"></span>
