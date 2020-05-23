@@ -11,13 +11,14 @@
         data-toggle="dropdown"
         data-disabled="true"
       >
-        <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" />
+        <img
+          id="avatar"
+          src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
+          class="rounded-circle"
+        />
         <span class="caret"></span>
       </button>
-      <ul
-        class="dropdown-menu dropdown-menu-right m-1 p-1 text-shaddlebrown"
-        style="font-size: normal;"
-      >
+      <ul class="dropdown-menu dropdown-menu-right m-1 p-1 text-shaddlebrown">
         <li>{{user.first_name}} {{user.last_name}}</li>
         <li>{{user.email}}</li>
         <div class="dropdown-divider"></div>
@@ -34,18 +35,18 @@
     </span>
   </nav>
 </header>
-<span id="message" class="text-shaddlebrown d-none">&nbsp;</span>
-<div id="loader" class="text-shaddlebrown">
-  <br />
-  Loading lists&nbsp;&nbsp;
+<div
+  id="message"
+  class="alert alert-peru text-center d-none"
+  role="alert"
+></div>
+<div id="loader" class="alert alert-peru text-center" role="alert">
+  Loading lists&nbsp;
   <span class="spinner-grow spinner-grow-sm"></span>
   <span class="spinner-grow spinner-grow-sm"></span>
   <span class="spinner-grow spinner-grow-sm"></span>
 </div>
 {% else %}
-<script>
-  document.body.style.backgroundColor = "white";
-</script>
 
 <div id="login" class="card card-body text-center p-2">
   <span class="text-dark text-left">Sign in</span>

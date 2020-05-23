@@ -52,22 +52,20 @@
     @import url("https://fonts.googleapis.com/css?family=Roboto+Condensed");
     @import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap");
     body {
-      /*background: #f4f6f9;*/
       background: rgba(114, 62, 40, 0.05);
       font-family: "Work Sans", sans-serif;
+      font-size: 1.2rem;
+      /*background: #f4f6f9;*/
       /*font-family: "Roboto Condensed", sans-serif;*/
       /* font-family: "Varela Round", sans-serif; */
-      font-size: 1.2rem;
     }
     main {
       max-width: 500px;
       margin: auto;
     }
-    nav img {
-      width: 35px;
+    #avatar {
       height: 35px;
-      border-radius: 70px;
-      border: 2px solid #847d7f;
+      border: 2px solid #c47756;
     }
     #login {
       max-width: 400px;
@@ -79,13 +77,18 @@
     #login a {
       text-transform: none;
     }
+    #title {
+      background: white;
+      color: #723e28;
+      font-size: 1.2rem;
+    }
+    #createListBtn {
+      font-size: 1.2rem;
+    }
     .social-icon {
       width: 20px;
       margin-bottom: 3px;
       margin-right: 5px;
-    }
-    #loader {
-      text-align: center;
     }
     .text-shaddlebrown {
       color: #723e28 !important;
@@ -113,6 +116,18 @@
     }
     .text-black {
       color: black !important;
+    }
+    .alert-darkslategray {
+      color: white;
+      background: #285c72;
+      border: none;
+      border-radius: 0;
+    }
+    .alert-peru {
+      color: white;
+      background: #c47756;
+      border: none;
+      border-radius: 0;
     }
   </style>
 </head>

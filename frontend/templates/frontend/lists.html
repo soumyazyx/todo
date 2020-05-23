@@ -12,27 +12,23 @@
           <div class="col-12">
             <main>
               <form id="form">
-                <div class="flex-wrapper">
-                  <br />
-                  <div class="input-group mb-3">
-                    <input
-                      id="title"
-                      name="title"
-                      type="text"
-                      class="form-control"
-                      style="background: white; color: #723e28;"
-                      placeholder="List Name"
-                    />
-                    <div class="input-group-append">
-                      <button
-                        id="createListBtn"
-                        class="btn"
-                        style="background: #723e28; color: white;"
-                        type="submit"
-                      >
-                        Create List
-                      </button>
-                    </div>
+                <div class="input-group mt-2 mb-2">
+                  <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    class="form-control"
+                    placeholder="List Name"
+                  />
+                  <div class="input-group-append">
+                    <button
+                      id="createListBtn"
+                      class="btn"
+                      style="background: #723e28; color: white;"
+                      type="submit"
+                    >
+                      Create List
+                    </button>
                   </div>
                 </div>
               </form>
@@ -109,17 +105,15 @@
             console.log("Change detected - rerender the lists");
             // Continue with the flow
             previous = current;
-            $("#loader").hide("");
+            $("#loader").addClass("d-none");
             $("#createListBtn").html("Create List");
             $("#lists-wrapper").empty();
             var lists = data;
             console.log(data);
             if (lists.length == 0) {
-              console.log("tiu1");
-              $("#message").html(
-                '<div class="alert alert-warning text-center" role="alert">Seems a bit lonely here. No lists yet! </div>'
-              );
               $("#message").removeClass("d-none");
+              $("#message").text("Create a list to get started!");
+              $("#message").addClass("animate__animated animate__headShake");
             } else {
               $("#message").addClass("d-none");
             }
@@ -138,10 +132,10 @@
                   onclick="showLoader(${listid}); return true;"
                 >
                 <span id="data-row-${i}" class="task-wrapper">
-                  <span class="text-dark"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
-                  <span class="text-dark">
+                  <span class="text-muted"><i class="fas fa-tasks"></i>&nbsp;&nbsp;&nbsp;</span>
+                  <span class="text-black">
                     ${title}
-                    <span class="d-none" id="list-loader-${listid}">
+                    <span class="d-none text-muted" id="list-loader-${listid}">
                       <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                       <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
                       <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
@@ -181,8 +175,9 @@
           },
           body: JSON.stringify({ title: title, users: [user] }),
         }).then(function (response) {
-          console.log(response);
-          console.log("Adding new list..Done");
+          $("#createListBtn").html(
+            'Adding list <div class="spinner-border spinner-border-sm"></div>'
+          );
           buildLists();
           var href = baseurl + `/list/${listid}`;
           document.getElementById("form").reset();
@@ -206,16 +201,6 @@
       });
     </script>
 
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-      crossorigin="anonymous"
-    ></script>
     {% endif %}
   </body>
 </html>
