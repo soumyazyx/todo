@@ -128,7 +128,8 @@
       function deleteItem(item) {
         console.log(`Deleting item with id[${item.id}]`);
         $("#task-delete-loader-" + item.id).html(
-          '<span style="float:right;" class="spinner-border spinner-border-sm text-danger"></span>'
+          '<!-- <span style="float:right;" class="spinner-border spinner-border-sm text-danger"></span>-->' +
+            '<div><div class="spinner-danger" style="float:right"></div></div>'
         );
         fetch(baseurl + `/api/task-delete/${item.id}`, {
           method: "DELETE",
@@ -199,7 +200,7 @@
               var completed = tasks[i].completed;
               var title = `<span class="title">${tasks[i].title}</span>`;
               item = `
-              <div id="data-row-${i}" class="shadow-sm p-2   mb-2 bg-white rounded animate__animated animate__slideInUp" style="width:100%;display:inline-flex">
+              <div id="data-row-${i}" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp" style="width:100%;display:inline-flex">
                 <div style="width:93%">`;
 
               if (tasks[i].completed == true) {
@@ -221,7 +222,7 @@
                   </span>
                 </div>
                 <div style="width:7%;align-self:center;">
-                  <span id="task-delete-loader-${taskid}" class="text-danger"><i  class="fas fa-trash-alt delete" style="float:right"></i></span>
+                  <span id="task-delete-loader-${taskid}" class="text-danger"><i class="fas fa-trash-alt delete" style="float:right"></i></span>
                 </div>
               </div>`;
 
@@ -233,6 +234,8 @@
             }
             if (completedTasksCount > 0) {
               $("#show-completed-tasks").removeClass("d-none");
+            } else {
+              $("#show-completed-tasks").addClass("d-none");
             }
             tasks_snapshot = tasks;
             for (var i in tasks) {
@@ -279,7 +282,7 @@
           return false;
         }
         $("#addTaskBtn").html(
-          'Creating Task <div class="spinner-border spinner-border-sm"></div>'
+          '<div>Creating Task <div class="spinner-peru" style="float:right"></div></div>'
         );
         var url = baseurl + "/api/task-create/";
         if (activeItem != null) {
@@ -298,7 +301,7 @@
         }).then(function (response) {
           console.log("Adding task..Done");
           $("#addTaskBtn").html(
-            'Adding Task <div class="spinner-border spinner-border-sm"></div>'
+            '<div>Adding Task <div class="spinner-peru" style="float:right"></div></div>'
           );
 
           buildTasks();
