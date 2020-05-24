@@ -128,7 +128,7 @@
       function deleteItem(item) {
         console.log(`Deleting item with id[${item.id}]`);
         $("#task-delete-loader-" + item.id).html(
-          'Deleting <div class="spinner-border spinner-border-sm"></div>'
+          '<span style="float:right;" class="spinner-border spinner-border-sm text-danger"></span>'
         );
         fetch(baseurl + `/api/task-delete/${item.id}`, {
           method: "DELETE",
@@ -198,42 +198,37 @@
               var taskid = tasks[i].id;
               var completed = tasks[i].completed;
               var title = `<span class="title">${tasks[i].title}</span>`;
+              item = `
+              <div id="data-row-${i}" class="shadow-sm p-2   mb-2 bg-white rounded animate__animated animate__slideInUp" style="width:100%;display:inline-flex">
+                <div style="width:93%">`;
+
               if (tasks[i].completed == true) {
                 completedTasksCount += 1;
-                completedItem = `
-                        <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
-                          <span id="data-row-${i}" class="task-wrapper">
-                            <input type="checkbox"  class="cb" checked="checked">
-                            <span class="text-dark"><del>${title}</del></span>
-                            <span class="d-none" id="task-loader-${taskid}">
-                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                            </span>
-                            <span id="task-delete-loader-${taskid}" class="text-danger" style="float: right">
-                              <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
-                            </span>
-                          </span>
-                        </div>`;
-                $("#completed-tasks").append(completedItem);
+                item += `
+                  <input type="checkbox"  class="cb" checked="checked">
+                  <span class="text-dark"><del>${title}</del></span>`;
               } else {
                 pendingTasksCount += 1;
-                pendingItem = `
-                        <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
-                          <span id="data-row-${i}" class="task-wrapper">
-                            <input type="checkbox" class="cb">
-                            <span class="text-dark">${title}</span>
-                            <span class="d-none" id="task-loader-${taskid}">
-                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                              <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                            </span>
-                            <span  id="task-delete-loader-${taskid}" class="text-danger" style="float: right">
-                              <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
-                            </span>
-                          </span>
-                        </div>`;
-                $("#pending-tasks").append(pendingItem);
+                item += `
+                  <input type="checkbox" class="cb">
+                  <span class="text-dark">${title}</span>`;
+              }
+              item += `              
+                  <span class="d-none" id="task-loader-${taskid}">
+                    <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                    <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                    <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                  </span>
+                </div>
+                <div style="width:7%;align-self:center;">
+                  <span id="task-delete-loader-${taskid}" class="text-danger"><i  class="fas fa-trash-alt delete" style="float:right"></i></span>
+                </div>
+              </div>`;
+
+              if (tasks[i].completed == true) {
+                $("#completed-tasks").append(item);
+              } else {
+                $("#pending-tasks").append(item);
               }
             }
             if (completedTasksCount > 0) {
