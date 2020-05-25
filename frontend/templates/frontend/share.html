@@ -1,0 +1,167 @@
+{% load socialaccount %} {% providers_media_js %} {% load static %}
+
+<!DOCTYPE html>
+<html>
+  {% include 'frontend/head.html' %}
+  <body>
+    {% include 'frontend/share_header.html' %}
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <main>
+            <div id="task-container">
+              <div id="form-wrapper">
+                <br />
+                <form id="form">
+                  <div class="flex-wrapper">
+                    <div class="input-group mb-3">
+                      <input
+                        id="email-id"
+                        name="email-id"
+                        type="email"
+                        class="form-control text-shaddlebrown"
+                        style="border: 1px solid #ccc;"
+                        placeholder="name@gmail.com"
+                        value="soumyazyx@gmail.com"
+                      />
+                      <div class="input-group-append">
+                        <button
+                          id="invite"
+                          class="btn"
+                          style="background: #723e28; color: white;"
+                          type="submit"
+                        >
+                          Invite
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      function handleBlankInvite() {
+        Swal.fire({
+          text: "email id cant be left blank!",
+          confirmButtonColor: "#723e28",
+        }).then((result) => {
+          $("#title").focus();
+          $("#form")
+            .addClass("animate__animated animate__headShake")
+            .one(
+              "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+              function () {
+                $(this).removeClass("animate__animated animate__headShake");
+              }
+            );
+        });
+      }
+
+      function handleUserInvite(target_user_id, target_email) {
+        var listid = $("#listid").text();
+        var listtitle = $("#listtitle").text();
+        var baseurl = window.location.origin;
+
+        $.ajax({
+          url: `${baseurl}/api/list-share/${listid}/${target_user_id}`,
+          beforeSend: function (xhr) {
+            console.log(
+              `Sharing list[${listid}] with user[${target_user_id}]..`
+            );
+            $("#invite").html(
+              'Sharing <div class="spinner-border spinner-border-sm"></div>'
+            );
+          },
+        })
+          .done(function (data) {
+            $("#invite").html("Invite");
+            console.log(
+              `Sharing list[${listid}] with user[${target_user_id}]..Done`
+            );
+            console.log(data);
+            if (data == "List already shared!") {
+              Swal.fire({
+                icon: "success",
+                html: `<span><span class="font-weight-bold text-info">${target_email}</span> is already subscribed to list <span class="font-weight-bold text-info">[${listtitle}]</span>`,
+                confirmButtonColor: "#723e28",
+              });
+            } else if (data == "List successfully shared!") {
+              Swal.fire({
+                icon: "success",
+                html: `<span><b>[${listtitle}]</b> successfully shared with <b>[${target_email}]</b>`,
+              });
+            } else {
+              Swal.fire({
+                icon: "warning",
+                title: `Invalid response recieved!`,
+              });
+            }
+          })
+          .fail(function () {
+            alert("Internal error occured");
+          })
+          .always(function () {
+            // alert("complete");
+          });
+      }
+
+      function handleInvite() {
+        var baseurl = window.location.origin;
+        var email = $("#email-id").val();
+        $.ajax({
+          url: `${baseurl}/api/get-user-id/email/${email}`,
+          beforeSend: function (xhr) {
+            console.log(`Validating user for [${email}]..`);
+            $("#invite").html(
+              'Sharing <div class="spinner-border spinner-border-sm"></div>'
+            );
+          },
+        })
+          .done(function (data) {
+            console.log(`Validating user for [${email}]..Done`);
+            if (data.user_id == -1) {
+              // User not registered on todozyx
+              handleMissingUserInvite();
+            } else {
+              handleUserInvite(data.user_id, email);
+            }
+          })
+          .fail(function () {
+            alert("Internal error occured");
+          })
+          .always(function () {
+            // alert("complete");
+          });
+      }
+
+      function handleMissingUserInvite() {
+        var email = $("#email-id").val();
+        var baseurl = window.location.origin;
+        Swal.fire({
+          icon: "warning",
+          title: `<span><span class="text-danger">${email}</span> not found</span>`,
+          html: `<hr><span>Try sharing the list after <span class="font-weight-bold">${email}</span> registers at <a href="${baseurl}">${baseurl}</a></span>`,
+        }).then((result) => {
+          $("#invite").html("Invite");
+        });
+      }
+    </script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $("#form-wrapper").submit(function (e) {
+          e.preventDefault();
+          if ($.trim($("#email-id").val()).length == 0) {
+            handleBlankInvite();
+          } else {
+            handleInvite();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

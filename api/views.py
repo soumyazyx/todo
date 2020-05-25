@@ -80,7 +80,7 @@ def taskDelete(request, pk):
 @login_required
 def lists(request, username):
     # query = f"SELECT AL.ID, USER_ID AS USER, AL.TITLE AS LIST_TITLE, COUNT(TSK._LIST_ID) AS TASKS_COUNT FROM PUBLIC.AUTH_USER AU,PUBLIC.API_LIST AL,PUBLIC.API_TASK TSK WHERE AL.USER_ID = AU.ID AND AL.ID = TSK._LIST_ID AND AU.USERNAME = 'soumya_ranjan' GROUP BY AL.ID,TSK._LIST_ID"
-    lists = List.objects.filter(users__username=username)
+    lists = List.objects.filter(users__username=username).order_by("-id")
 
     request.session["lists"] = {}
     for lst in lists:
@@ -130,10 +130,48 @@ def listDelete(request, pk):
 
 @api_view(["GET"])
 @login_required
-def getUserId(request, username):
+def listShare(request, list_id, user_id):
+    print(f"{list_id}|{user_id}")
+    # Check if the record already exists
+    if List.users.through.objects.filter(list_id=list_id, user_id=user_id).count() > 0:
+        # Record already exist - its not an error
+        return Response("List already shared!")
+    else:
+        # Insert record
+        List.users.through.objects.create(list_id=list_id, user_id=user_id)
+        return Response("List successfully shared!")
+
+
+@api_view(["GET"])
+@login_required
+def getUserIdFromUsername(request, username):
     query = f"SELECT ID,USERNAME,EMAIL FROM PUBLIC.AUTH_USER AU WHERE AU.USERNAME = '{username}'"
     querySet = User.objects.raw(query)
     for rec in querySet:
         username = rec.username
         userid = rec.id
     return JsonResponse({"username": username, "id": userid})
+
+
+@api_view(["GET"])
+def getUserIdFromEmail(request, email):
+    user = User.objects.filter(email=email)
+    if user.count() == 0:
+        return JsonResponse({"user_id": -1, "email_id": email})
+
+    for rec in user:
+        user_id = rec.id
+        user_name = rec.username
+        first_name = rec.first_name
+        last_name = rec.last_name
+        date_joined = rec.date_joined
+    return JsonResponse(
+        {
+            "email_id": email,
+            "user_id": user_id,
+            "user_name": user_name,
+            "first_name": first_name,
+            "last_name": last_name,
+            "date_joined": date_joined,
+        }
+    )

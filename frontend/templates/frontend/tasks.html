@@ -11,32 +11,29 @@
           <main>
             <div id="task-container">
               <div id="form-wrapper">
-                <br />
                 <form id="form">
-                  <div class="flex-wrapper">
-                    <div class="input-group mb-3">
-                      <input
-                        id="title"
-                        name="title"
-                        type="text"
-                        class="form-control text-saddlebrown"
-                        style="border: 1px solid #ccc;"
-                        placeholder="Task Name"
-                      />
-                      <div class="input-group-append">
-                        <button
-                          id="addTaskBtn"
-                          class="btn"
-                          style="background: #723e28; color: white;"
-                          type="submit"
-                        >
-                          Add Task
-                        </button>
-                      </div>
+                  <div class="input-group mb-2 mt-2">
+                    <input
+                      id="title"
+                      name="title"
+                      type="text"
+                      class="form-control text-shaddlebrown"
+                      style="border: 1px solid #ccc;"
+                      placeholder="Task Name"
+                    />
+                    <div class="input-group-append">
+                      <button
+                        id="addTaskBtn"
+                        class="btn input-grp-shaddlebrown"
+                        type="submit"
+                      >
+                        Add Task
+                      </button>
                     </div>
                   </div>
                 </form>
               </div>
+
               <div id="tasks-wrapper">
                 <div id="pending-tasks"></div>
 
@@ -75,8 +72,15 @@
 
       $("#back").attr("href", baseurl);
 
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-shaddlebrown m-1",
+          cancelButton: "btn btn-secondary m-1",
+        },
+        buttonsStyling: false,
+      });
       function getUserId() {
-        var url = baseurl + "/api/get-user-id/" + loggedInUsername;
+        var url = baseurl + "/api/get-user-id/username/" + loggedInUsername;
         console.log(`Fetching userid for username [${loggedInUsername}].. `);
         fetch(url)
           .then((resp) => resp.json())
@@ -125,7 +129,8 @@
       function deleteItem(item) {
         console.log(`Deleting item with id[${item.id}]`);
         $("#task-delete-loader-" + item.id).html(
-          'Deleting <div class="spinner-border spinner-border-sm"></div>'
+          '<!-- <span style="float:right;" class="spinner-border spinner-border-sm text-danger"></span>-->' +
+            '<div><div class="spinner-danger" style="float:right"></div></div>'
         );
         fetch(baseurl + `/api/task-delete/${item.id}`, {
           method: "DELETE",
@@ -181,7 +186,7 @@
             console.log("Change detected - rerender the tasks");
             // Continue with the flow
             previous = current;
-            $("#loader").hide("slow");
+            $("#loader").hide();
             $("#addTaskBtn").html("Add Task");
             // console.log(`Fetching tasks/s using [${url}]..Done`);
             $("#pending-tasks").empty();
@@ -195,46 +200,43 @@
               var taskid = tasks[i].id;
               var completed = tasks[i].completed;
               var title = `<span class="title">${tasks[i].title}</span>`;
+              item = `
+              <div id="data-row-${i}" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp" style="width:100%;display:inline-flex">
+                <div style="width:93%">`;
+
               if (tasks[i].completed == true) {
                 completedTasksCount += 1;
-                completedItem = `
-                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
-                    <span id="data-row-${i}" class="task-wrapper">
-                      <input type="checkbox"  class="cb" checked="checked">
-                      <span class="text-dark"><del>${title}</del></span>
-                      <span class="d-none" id="task-loader-${taskid}">
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                      </span>
-                      <span id="task-delete-loader-${taskid}" class="text-tomato" style="float: right">
-                        <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
-                      </span>
-                    </span>
-                  </div>`;
-                $("#completed-tasks").append(completedItem);
+                item += `
+                  <input type="checkbox"  class="cb" checked="checked">
+                  <span class="text-dark"><del>${title}</del></span>`;
               } else {
                 pendingTasksCount += 1;
-                pendingItem = `
-                  <div style="display:block;" class="shadow-sm p-2 mb-2 bg-white rounded animate__animated animate__slideInUp">
-                    <span id="data-row-${i}" class="task-wrapper">
-                      <input type="checkbox" class="cb">
-                      <span class="text-dark">${title}</span>
-                      <span class="d-none" id="task-loader-${taskid}">
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                        <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
-                      </span>
-                      <span  id="task-delete-loader-${taskid}" class="text-tomato" style="float: right">
-                        <i class="fas fa-trash-alt delete"></i>&nbsp;&nbsp;&nbsp;
-                      </span>
-                    </span>
-                  </div>`;
-                $("#pending-tasks").append(pendingItem);
+                item += `
+                  <input type="checkbox" class="cb">
+                  <span class="text-dark">${title}</span>`;
+              }
+              item += `              
+                  <span class="d-none" id="task-loader-${taskid}">
+                    <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                    <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                    <small><span class="spinner-grow spinner-grow-sm fa-xs"></span></small>
+                  </span>
+                </div>
+                <div style="width:7%;align-self:center;">
+                  <span id="task-delete-loader-${taskid}" class="text-danger"><i class="fas fa-trash-alt delete" style="float:right"></i></span>
+                </div>
+              </div>`;
+
+              if (tasks[i].completed == true) {
+                $("#completed-tasks").append(item);
+              } else {
+                $("#pending-tasks").append(item);
               }
             }
             if (completedTasksCount > 0) {
               $("#show-completed-tasks").removeClass("d-none");
+            } else {
+              $("#show-completed-tasks").addClass("d-none");
             }
             tasks_snapshot = tasks;
             for (var i in tasks) {
@@ -272,15 +274,16 @@
       }
 
       function addTask() {
-        console.log("Adding task..");
         var inp = $("#title").val();
         if (jQuery.trim(inp).length == 0) {
-          //do something
-          alert("Task can't be empty!");
+          swalWithBootstrapButtons.fire({
+            animation: false,
+            html: "Task can't be empty!",
+          });
           return false;
         }
         $("#addTaskBtn").html(
-          'Adding Task <div class="spinner-border spinner-border-sm"></div>'
+          '<div>Adding Task <div class="spinner-peru" style="float:right"></div></div>'
         );
         var url = baseurl + "/api/task-create/";
         if (activeItem != null) {
@@ -298,35 +301,180 @@
           body: JSON.stringify({ title: title, _list: listid }),
         }).then(function (response) {
           console.log("Adding task..Done");
+          $("#addTaskBtn").html(
+            '<div>Adding Task <div class="spinner-peru" style="float:right"></div></div>'
+          );
+
           buildTasks();
           document.getElementById("form").reset();
         });
       }
 
-      function deleteTask() {
-        if (confirm(`Are you sure to delete list [${listtitle}]?`)) {
-          $("#loader-text").html(
-            `Deleting list <span class="badge badge-shaddlebrown">${listtitle}</span>`
-          );
-          $("#loader").show();
+      function deleteList() {
+        var baseurl = window.location.origin;
+        var listid = $("#listid").text();
+        var listtitle = $("#listtitle").text();
+        var url = baseurl + `/api/list-delete/${listid}`;
 
-          console.log(`Deleting list[${listtitle}] with listid=[${listid}]..`);
-          var url = baseurl + `/api/list-delete/${listid}`;
-          fetch(url, {
-            method: "DELETE",
-            headers: {
-              "Content-type": "application/json",
-              "X-CSRFToken": csrftoken,
+        const swalWithBootstrapButtons = Swal.mixin({
+          customClass: {
+            confirmButton: "btn btn-shaddlebrown m-1",
+            cancelButton: "btn btn-secondary m-1",
+          },
+          buttonsStyling: false,
+        });
+
+        swalWithBootstrapButtons
+          .fire({
+            animation: false,
+            html: `Are you sure to delete <span class="text-info font-weight-bold">${listtitle}</span>`,
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+            showLoaderOnConfirm: true,
+            preConfirm: (deletelist) => {
+              return fetch(url, {
+                method: "DELETE",
+                headers: {
+                  "Content-type": "application/json",
+                  "X-CSRFToken": csrftoken,
+                },
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error(response.statusText);
+                  }
+                  return response.json();
+                })
+                .catch((error) => {
+                  Swal.showValidationMessage(`Request failed: ${error}`);
+                });
             },
-          }).then((response) => {
-            console.log(
-              `Deleting list[${listtitle}] with listid=[${listid}]..Done`
-            );
-            //buildLists();
-            window.location.href = baseurl;
+            allowOutsideClick: () => !Swal.isLoading(),
+          })
+          .then((result) => {
+            if (result.value) {
+              window.location.replace(baseurl);
+              /*
+                    const Toast = Swal.mixin({
+                      toast: true,
+                      position: "center",
+                      showConfirmButton: false,
+                      timer: 2000,
+                      timerProgressBar: true,
+                      // onOpen: (toast) => {
+                      //   toast.addEventListener("mouseenter", Swal.stopTimer);
+                      //   toast.addEventListener("mouseleave", Swal.resumeTimer);
+                      // },
+                    });
+                    Toast.fire({
+                      animation: false,
+                      icon: "success",
+                      title: "List deleted. Redirecting to home page..",
+                    }).then(function () {
+                      window.location.replace(baseurl);
+                    });
+                    */
+            }
           });
-        }
-        return false;
+      }
+
+      function shareList() {
+        var listid = $("#listid").text();
+        var listtitle = $("#listtitle").text();
+        var baseurl = window.location.origin;
+        swalWithBootstrapButtons
+          .fire({
+            animation: false,
+            title: "Invite people",
+            html:
+              "Invitee will be able to <span class='text-shaddlebrown font-weight-bold'>see, edit & reshare the list</span><br/>",
+            input: "email",
+            inputPlaceholder: "name@gmail.com",
+            confirmButtonText: "Invite",
+            showCancelButton: true,
+            showLoaderOnConfirm: true,
+            preConfirm: (mailid) => {
+              var url = `${baseurl}/api/get-user-id/email/${mailid}`;
+              return fetch(url, {
+                method: "GET",
+                headers: {
+                  "Content-type": "application/json",
+                  "X-CSRFToken": csrftoken,
+                },
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error(response.statusText);
+                  }
+                  return response.json();
+                })
+                .catch((error) => {
+                  Swal.showValidationMessage(`Request failed: ${error}`);
+                });
+            },
+            allowOutsideClick: () => !Swal.isLoading(),
+          })
+          .then((result) => {
+            if (result.value.user_id == -1) {
+              const Toast = Swal.mixin({
+                toast: true,
+                position: "center",
+                showConfirmButton: true,
+                // timer: 3000,
+                timerProgressBar: true,
+                onOpen: (toast) => {
+                  toast.addEventListener("mouseenter", Swal.stopTimer);
+                  toast.addEventListener("mouseleave", Swal.resumeTimer);
+                },
+              });
+
+              swalWithBootstrapButtons
+                .fire({
+                  animation: false,
+                  icon: "error",
+                  html: `<b>${result.value.email_id}</b> not registered with todozyx<hr>Lists can only be shared with registered users!`,
+                })
+                .then(function () {
+                  shareList();
+                });
+              // swal.fire("User not in todozyx");
+            } else {
+              swalWithBootstrapButtons.fire({
+                animation: false,
+                html: "Sharing..",
+                showConfirmButton: false,
+                onBeforeOpen: () => {
+                  swalWithBootstrapButtons.showLoading();
+                },
+              });
+
+              console.log(result.value.email_id);
+              var url = `${baseurl}/api/list-share/${listid}/${result.value.user_id}`;
+              console.log(url);
+              fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data == "List already shared!") {
+                    swalWithBootstrapButtons.fire({
+                      animation: false,
+                      icon: "success",
+                      html: `<span><span class="font-weight-bold text-info">${result.value.email_id}</span> is already subscribed to list <span class="font-weight-bold text-info">${listtitle}</span>`,
+                      confirmButtonColor: "#723e28",
+                    });
+                  } else if (data == "List successfully shared!") {
+                    swalWithBootstrapButtons.fire({
+                      icon: "success",
+                      html: `List <span class="font-weight-bold text-info">${listtitle}</span> successfully shared with <span class="font-weight-bold text-info">${result.value.email_id}</span>`,
+                    });
+                  } else {
+                    swalWithBootstrapButtons.fire({
+                      icon: "warning",
+                      title: `Invalid response recieved!`,
+                    });
+                  }
+                });
+            }
+          });
       }
     </script>
     <script type="text/javascript">
@@ -335,11 +483,6 @@
           e.preventDefault();
           addTask();
         });
-
-        $("#deletelist").click(function () {
-          deleteTask();
-        });
-
         getUserId();
 
         // Setting previous and current to different values to force initial tasks refresh
@@ -349,15 +492,5 @@
         setInterval("buildTasks()", 60000);
       });
     </script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-      crossorigin="anonymous"
-    ></script>
   </body>
 </html>

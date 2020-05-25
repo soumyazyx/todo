@@ -1,34 +1,53 @@
 {% load socialaccount %}
 
 <header class="header">
-  <nav class="navbar navbar-expand-sm" style="background: #723e28">
+  <nav class="navbar" style="background: #723e28;">
     {% if user.is_authenticated %}
+    <a id="back" href="" style="color: #00bfff;">
+      <i class="fas fa-arrow-left"></i>
+    </a>
     <span>
-      <a id="back" href="" style="color: #00bfff"><i class="fas fa-arrow-left"></i></a>
       <button
-        class="dropdown-toggle text-white"
+        id="lists-dropdown"
+        class="btn btn-secondary rounded dropdown-toggle "
         data-toggle="dropdown"
-        style="background: none; border: none;"
+        data-disabled="true"
       >
         <span>&nbsp;&nbsp;{{listtitle}}</span>
         <span class="caret"></span>
       </button>
-      <ul class="dropdown-menu m-1 p-1 text-saddlebrown" style="font-size: normal;">
+      <ul
+        class="dropdown-menu dropdown-menu-right mr-3 p-1"
+        style="font-size: normal;"
+      >
+        <!-- 
         <li>{{user.first_name}} {{user.last_name}}</li>
         <li>{{user.email}}</li>
         <div class="dropdown-divider"></div>
+        -->
         <li class="nav-item mb-1">
-          <a class="text-danger btn btn-block btn-light" id="deletelist"
-            >Delete list</a
-          >
+          <a
+            class="btn btn-block text-white btn-shaddlebrown-faded"
+            id="sharelist"
+            onclick="shareList()"
+            >Share list <!-- <i class="fas fa-share-alt"></i> -->
+          </a>
+        </li>
+        <li class="nav-item mb-1">
+          <a
+            class="btn btn-block text-white btn-shaddlebrown-faded"
+            id="deletelist"
+            onclick="deleteList()"
+            >Delete list<!-- <i class="fas fa-ban"></i> -->
+          </a>
         </li>
         <li class="nav-item">
           <a
             id="logout"
-            class="btn btn-light btn-block text-warning"
+            class="btn btn-block text-white btn-shaddlebrown-faded"
             href="/accounts/logout"
-            >Logout</a
-          >
+            >Logout <!--<i class="fas fa-sign-out-alt"></i>-->
+          </a>
         </li>
       </ul>
     </span>
@@ -41,9 +60,8 @@
   </nav>
 </header>
 
-<div id="loader" style="text-align: center;">
-  <br />
-  <span id="loader-text" class="text-saddlebrown">Loading tasks&nbsp;&nbsp;</span>
+<div id="loader" class="alert alert-peru text-center" role="alert">
+  Loading tasks&nbsp;&nbsp;
   <span class="spinner-grow spinner-grow-sm"></span>
   <span class="spinner-grow spinner-grow-sm"></span>
   <span class="spinner-grow spinner-grow-sm"></span>

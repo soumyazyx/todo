@@ -20,3 +20,11 @@ def tasks(request):
         "listtitle": request.session.get("selected_list_title"),
     }
     return render(request, "frontend/tasks.html", context)
+
+
+def sharelist(request):
+    context = {
+        "listid": request.session.get("selected_list_id"),
+        "listtitle": request.session.get("selected_list_title"),
+    }
+    return render(request, "frontend/share.html", context)

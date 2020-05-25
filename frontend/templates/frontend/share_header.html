@@ -1,0 +1,50 @@
+{% load socialaccount %}
+
+<header class="header">
+  <nav class="navbar navbar-expand-sm" style="background: #723e28">
+    {% if user.is_authenticated %}
+    <span>
+      <a id="back" href="" style="color: #00bfff"><i class="fas fa-arrow-left"></i></a>
+      <button
+        class="dropdown-toggle text-white"
+        data-toggle="dropdown"
+        style="background: none; border: none;"
+      >
+        <span>&nbsp;&nbsp;{{listtitle}}</span>
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu m-1 p-1" style="font-size: normal;">
+        <li>{{user.first_name}} {{user.last_name}}</li>
+        <li>{{user.email}}</li>
+        <div class="dropdown-divider"></div>
+        <li class="nav-item">
+          <a
+            id="logout"
+            class="btn btn-light btn-block text-warning"
+            href="/accounts/logout"
+            >Logout</a
+          >
+        </li>
+      </ul>
+    </span>
+
+    {% else %}
+    <a id="google_login" href="/accounts/google/login">
+      Sign in with Google
+    </a>
+    {% endif %}
+  </nav>
+</header>
+
+
+<!-- hidden spans -->
+<span class="d-none" id="logged_in_username">{{user}}</span>
+<span class="d-none" id="logged_in_userid"></span>
+<span class="d-none" id="listid">{{listid}}</span>
+<span class="d-none" id="listtitle">{{listtitle}}</span>
+<span class="d-none" id="user_user">{{user}}</span>
+<span class="d-none" id="user_username">{{user.username}}</span>
+<span class="d-none" id="user_id">{{user.id}}</span>
+<span class="d-none" id="user_first_name">{{user.first_name}}</span>
+<span class="d-none" id="user_last_name">{{user.last_name}}</span>
+<span class="d-none" id="user_email_id">{{user.email}}</span>
