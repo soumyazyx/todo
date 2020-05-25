@@ -33,6 +33,7 @@
                   </div>
                 </form>
               </div>
+
               <div id="tasks-wrapper">
                 <div id="pending-tasks"></div>
 
@@ -282,7 +283,7 @@
           return false;
         }
         $("#addTaskBtn").html(
-          '<div>Creating Task <div class="spinner-peru" style="float:right"></div></div>'
+          '<div>Adding Task <div class="spinner-peru" style="float:right"></div></div>'
         );
         var url = baseurl + "/api/task-create/";
         if (activeItem != null) {
