@@ -155,7 +155,7 @@
           return false;
         }
         $("#createListBtn").html(
-          'Creating list <div class="spinner-border spinner-border-sm"></div>'
+          '<div>Creating list <div class="spinner-peru" style="float:right"></div></div>'
         );
         var url = baseurl + "/api/list-create/";
         if (activeItem != null) {
@@ -175,7 +175,7 @@
           body: JSON.stringify({ title: title, users: [user] }),
         }).then(function (response) {
           $("#createListBtn").html(
-            'Adding list <div class="spinner-border spinner-border-sm"></div>'
+            '<div>Creating list <div class="spinner-peru" style="float:right"></div></div>'
           );
           buildLists();
           var href = baseurl + `/list/${listid}`;
