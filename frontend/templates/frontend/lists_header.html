@@ -49,11 +49,12 @@
 {% else %}
 
 <div id="login" class="card card-body text-center p-2">
-  <span class="text-dark text-left">Sign in</span>
-  <hr />
+
   {% load socialaccount %}
-  <a
-    class="text-dark text-left"
+  <br><br>
+  <a 
+    style="border: 1px solid #ddd;"
+    class="btn btn-light btn-lg shadow-sm text-left text-secondary"
     role="button"
     id="google_login"
     href="/accounts/google/login"
@@ -62,9 +63,8 @@
       class="social-icon"
       alt="Google sign-in"
       src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
-    />Google
+    /> <strong>Sign in with Google</strong>
   </a>
-  <hr />
 </div>
 
 {% endif %}
